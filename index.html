@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:,">
+</head>
+<body>
+    <div class="control">
+        <button id="start-button">start</button>
+        <button id="stop-button">stop</button>
+        <button id="reset-button">reset</button>
+        <label for="random-checkbox">random</label>
+        <input id="random-checkbox" type="checkbox"></input>
+        <label for="size-range">size(10)</label>
+        <input id="size-range" value="10" type="range" min="10" max="500">
+        <label for="speed-range">speed(1ms)</label>
+        <input id="speed-range" value="1" type="range" min="1" max="200">
+    </div>
+    <div class="algorithms">
+        <span>result = </span><span id="result"></span><br>
+        <select id="algorithms-selector">
+            <option>Bubble sort</option>
+            <option>Selection sort</option=>
+        </select>
+    </div>
+    <canvas id="canvas"></canvas>
+    <script src="script.js"></script>
+</body>
+</html>
