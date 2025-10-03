@@ -14,14 +14,14 @@
             <button>Reset</button>
         </div>
         <div id="control-sliders">
-            <label id="size-range-label" for="size-range">size: 10 elements</label>
-            <input id="size-range" value="10" type="range" min="10" max="500" autocomplete="off">
-            <label id="speed-range-label" for="speed-range">speed: 1 ms</label>
+            <label id="size-range-label" for="size-range">size: 10 elements</label><br>
+            <input id="size-range" value="10" type="range" min="10" max="500" autocomplete="off"><br>
+            <label id="speed-range-label" for="speed-range">speed: 1 ms</label><br>
             <input id="speed-range" value="1" type="range" min="1" max="200" autocomplete="off">
         </div>
         <div id="control-select">
             <label>Select algortihm:</label>
-            <select autocomplete="off">
+            <select autocomplete="off" id="algorithm-select">
                 <option>Block sort</option>
                 <option>Bubble sort</option>
                 <option>Cocktail shaker sort</option>
@@ -50,6 +50,16 @@
                 <option>Tree sort</option>
             </select>
         </div>
+    </div>
+
+    <div id="result-panel">
+        <h3>Result:</h3>
+        <label id="result-time">x ms</label><br>
+    </div>
+
+    <div id="canvas-contrainer">
+        <canvas id="canvas">
+        </canvas>
     </div>
 
     <script src="dist/script.js"></script>
