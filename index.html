@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sort algortihm visualizer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>      
+    <div id="control-panel">
+        <div id="control-buttons">
+            <button>Start</button>
+            <button>Stop</button>
+            <button>Reset</button>
+        </div>
+        <div id="control-sliders">
+            <label id="size-range-label" for="size-range">size: 10 elements</label>
+            <input id="size-range" value="10" type="range" min="10" max="500" autocomplete="off">
+            <label id="speed-range-label" for="speed-range">speed: 1 ms</label>
+            <input id="speed-range" value="1" type="range" min="1" max="200" autocomplete="off">
+        </div>
+        <div id="control-select">
+            <label>Select algortihm:</label>
+            <select autocomplete="off">
+                <option>Block sort</option>
+                <option>Bubble sort</option>
+                <option>Cocktail shaker sort</option>
+                <option>Comb sort</option>
+                <option>Crumsort</option>
+                <option>Cubesort</option>
+                <option>Cycle sort</option>
+                <option>Exchange sort</option>
+                <option>Fluxsort</option>
+                <option>Gnome sort</option>
+                <option>Heap sort</option>
+                <option>In-place merge sort</option>
+                <option>Insertion sort</option>
+                <option>Introsort</option>
+                <option>Library sort</option>
+                <option>Merge sort</option>
+                <option>Odd–even sort</option>
+                <option>Patience sort</option>
+                <option>Quicksort</option>
+                <option>Selection sort</option>
+                <option>Shellsort</option>
+                <option>Smoothsort</option>
+                <option>Strand sort</option>
+                <option>Timsort</option>
+                <option>Tournament sort</option>
+                <option>Tree sort</option>
+            </select>
+        </div>
+    </div>
+
+    <script src="dist/script.js"></script>
+</body>
+</html>
