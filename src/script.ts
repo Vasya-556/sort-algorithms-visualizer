@@ -59,6 +59,8 @@ generate_pseudorandom_data_button.addEventListener("click", () => {
 
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
 canvas.style.background = "#ff0000";
+const header = document.getElementById("header")!;
+const headerHeight = header.offsetHeight;
 let window_height = window.innerHeight;
 let window_width = window.innerWidth;
 
@@ -73,7 +75,7 @@ if (!ctx) {
 
 function resizeCanvas() {
     canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    canvas.height = window.innerHeight - headerHeight;
 }
 resizeCanvas();
 window.addEventListener("resize", resizeCanvas);

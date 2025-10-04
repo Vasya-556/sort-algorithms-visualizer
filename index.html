@@ -7,60 +7,62 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>      
-    <div id="control-panel">
-        <div id="control-buttons">
-            <button id="start-button">Start</button>
-            <button id="stop-button">Stop</button>
-            <button id="reset-button">Reset</button>
-            <button id="shuffle-button">Shuffle</button>
+    <header id="header">
+        <div id="control-panel">
+            <div id="control-buttons">
+                <button id="start-button">Start</button>
+                <button id="stop-button">Stop</button>
+                <button id="reset-button">Reset</button>
+                <button id="shuffle-button">Shuffle</button>
+            </div>
+            <div id="generate-data-buttons">
+                <button id="generate-random-data-button">Generate random data(with duplicates)</button>
+                <button id="generate-pseudorandom-data-button">Generate pseudorandom data(without duplicates)</button>
+            </div>
+            <div id="control-sliders">
+                <label id="size-range-label" for="size-range">size: 10 elements</label><br>
+                <input id="size-range" value="10" type="range" min="10" max="500" autocomplete="off"><br>
+                <label id="speed-range-label" for="speed-range">speed: 1 ms</label><br>
+                <input id="speed-range" value="1" type="range" min="1" max="200" autocomplete="off">
+            </div>
+            <div id="control-select">
+                <label>Select algortihm:</label>
+                <select autocomplete="off" id="algorithm-select">
+                    <option>Block sort</option>
+                    <option>Bubble sort</option>
+                    <option>Cocktail shaker sort</option>
+                    <option>Comb sort</option>
+                    <option>Crumsort</option>
+                    <option>Cubesort</option>
+                    <option>Cycle sort</option>
+                    <option>Exchange sort</option>
+                    <option>Fluxsort</option>
+                    <option>Gnome sort</option>
+                    <option>Heap sort</option>
+                    <option>In-place merge sort</option>
+                    <option>Insertion sort</option>
+                    <option>Introsort</option>
+                    <option>Library sort</option>
+                    <option>Merge sort</option>
+                    <option>Odd–even sort</option>
+                    <option>Patience sort</option>
+                    <option>Quicksort</option>
+                    <option>Selection sort</option>
+                    <option>Shellsort</option>
+                    <option>Smoothsort</option>
+                    <option>Strand sort</option>
+                    <option>Timsort</option>
+                    <option>Tournament sort</option>
+                    <option>Tree sort</option>
+                </select>
+            </div>
         </div>
-        <div id="generate-data-buttons">
-            <button id="generate-random-data-button">Generate random data(with duplicates)</button>
-            <button id="generate-pseudorandom-data-button">Generate pseudorandom data(without duplicates)</button>
+    
+        <div id="result-panel">
+            <h3>Result:</h3>
+            <label id="result-time">x ms</label><br>
         </div>
-        <div id="control-sliders">
-            <label id="size-range-label" for="size-range">size: 10 elements</label><br>
-            <input id="size-range" value="10" type="range" min="10" max="500" autocomplete="off"><br>
-            <label id="speed-range-label" for="speed-range">speed: 1 ms</label><br>
-            <input id="speed-range" value="1" type="range" min="1" max="200" autocomplete="off">
-        </div>
-        <div id="control-select">
-            <label>Select algortihm:</label>
-            <select autocomplete="off" id="algorithm-select">
-                <option>Block sort</option>
-                <option>Bubble sort</option>
-                <option>Cocktail shaker sort</option>
-                <option>Comb sort</option>
-                <option>Crumsort</option>
-                <option>Cubesort</option>
-                <option>Cycle sort</option>
-                <option>Exchange sort</option>
-                <option>Fluxsort</option>
-                <option>Gnome sort</option>
-                <option>Heap sort</option>
-                <option>In-place merge sort</option>
-                <option>Insertion sort</option>
-                <option>Introsort</option>
-                <option>Library sort</option>
-                <option>Merge sort</option>
-                <option>Odd–even sort</option>
-                <option>Patience sort</option>
-                <option>Quicksort</option>
-                <option>Selection sort</option>
-                <option>Shellsort</option>
-                <option>Smoothsort</option>
-                <option>Strand sort</option>
-                <option>Timsort</option>
-                <option>Tournament sort</option>
-                <option>Tree sort</option>
-            </select>
-        </div>
-    </div>
-
-    <div id="result-panel">
-        <h3>Result:</h3>
-        <label id="result-time">x ms</label><br>
-    </div>
+    </header>
 
     <div id="canvas-contrainer">
         <canvas id="canvas">
