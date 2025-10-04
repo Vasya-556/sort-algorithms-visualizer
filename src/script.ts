@@ -4,6 +4,10 @@ const size_label = document.getElementById("size-range-label") as HTMLLabelEleme
 const speed_input = document.getElementById("speed-range") as HTMLInputElement;
 const speed_label = document.getElementById("speed-range-label") as HTMLLabelElement;
 
+const asc_dsc_input = document.getElementById("asc-dsc-input") as HTMLInputElement;
+const asc_dsc_label = document.getElementById("asc-dsc-label") as HTMLLabelElement;
+let ascending = true;
+
 const sort_algorithm_select = document.getElementById("algorithm-select") as HTMLSelectElement;
 let sort_algorithm_name = "Block sort"
 
@@ -24,6 +28,11 @@ size_input.addEventListener("input", () => {
 
 speed_input.addEventListener("input", () => {
     speed_label.textContent = `speed: ${speed_input.value} ms`;
+});
+
+asc_dsc_input.addEventListener("change", () => {
+    asc_dsc_input.checked? asc_dsc_label.textContent = "Descending" : asc_dsc_label.textContent = "Ascending"; 
+    ascending = asc_dsc_input.checked;
 });
 
 sort_algorithm_select.addEventListener("change", () => {
@@ -121,5 +130,20 @@ const display_data = () => {
 
         ctx.fillStyle = "green";
         ctx.fill()
+    }
+}
+
+const buble_sort = () => {
+    let data_copy: number[] = JSON.parse(JSON.stringify(data))
+    let tmp: number;
+
+    for (let i = 0; i < data_copy.length - 2; i++) {
+        for (let j = 0; j < data_copy.length -2 - i; j++) {
+            if (data_copy[j] > data_copy[j + 1]){
+                tmp = data_copy[j];
+                data_copy[j] = data_copy[j+1];
+                data_copy[j+1] = tmp
+            }
+        }
     }
 }
