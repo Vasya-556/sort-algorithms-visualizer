@@ -109,13 +109,11 @@ const clear_canvas = () => {
 
 const display_data = () => {
     clear_canvas()
-    const innerWidth = canvas.width * 0.8;
-    const data_width = innerWidth / size;
+    const inner_width = canvas.width * 0.8;
+    const data_width = inner_width / size;
     
-    const innerHeight = canvas.height * 0.8;
-    const data_height = innerHeight / size;
-
-    console.log(`data height = ${data_height}`)
+    const inner_height = canvas.height * 0.8;
+    const data_height = inner_height / size;
 
     for (let i = 0; i < data.length; i++) {
         ctx.beginPath();
