@@ -39,9 +39,12 @@ sort_algorithm_select.addEventListener("change", () => {
     sort_algorithm_name = sort_algorithm_select.value;
 });
 
-start_button.addEventListener("click", () => {
+start_button.addEventListener("click", async () => {
     console.log(start_button.textContent);
-    console.log(data);
+    // console.log(data);
+    // buble_sort();
+    const sorted = await sort_result(buble_sort);
+    console.log(sorted);
 });
 
 stop_button.addEventListener("click", () => {
@@ -116,7 +119,8 @@ const clear_canvas = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-const display_data = () => {
+const display_data = (arr?: number[]) => {
+    const draw_data = arr ?? data;
     clear_canvas()
     const inner_width = canvas.width * 0.8;
     const data_width = inner_width / size;
@@ -124,25 +128,36 @@ const display_data = () => {
     const inner_height = canvas.height * 0.8;
     const data_height = inner_height / size;
 
-    for (let i = 0; i < data.length; i++) {
+    for (let i = 0; i < draw_data.length; i++) {
         ctx.beginPath();
-        ctx.rect(canvas.width * 0.1 + i * data_width, canvas.height * 0.9 - data_height * data[i], data_width, data_height * data[i])
+        ctx.rect(canvas.width * 0.1 + i * data_width, canvas.height * 0.9 - data_height * draw_data[i], data_width, data_height * draw_data[i])
 
         ctx.fillStyle = "green";
         ctx.fill()
     }
 }
 
-const buble_sort = () => {
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+const sort_result = async (fn: () => Promise<void>): Promise<number> => {
+    const startTime = performance.now();
+    await fn();
+    const endTime = performance.now();
+    return endTime - startTime;
+};
+
+const buble_sort = async () => {
     let data_copy: number[] = JSON.parse(JSON.stringify(data))
     let tmp: number;
 
-    for (let i = 0; i < data_copy.length - 2; i++) {
-        for (let j = 0; j < data_copy.length -2 - i; j++) {
+    for (let i = 0; i < data_copy.length - 1; i++) {
+        for (let j = 0; j < data_copy.length - 1 - i; j++) {
             if (data_copy[j] > data_copy[j + 1]){
                 tmp = data_copy[j];
                 data_copy[j] = data_copy[j+1];
                 data_copy[j+1] = tmp
+                await sleep(1);
+                display_data(data_copy)
             }
         }
     }
