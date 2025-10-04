@@ -119,7 +119,7 @@ const display_data = () => {
 
     for (let i = 0; i < data.length; i++) {
         ctx.beginPath();
-        ctx.rect(canvas.width * 0.1 + i * data_width, canvas.height * 0.1, data_width, data_height * data[i])
+        ctx.rect(canvas.width * 0.1 + i * data_width, canvas.height * 0.9 - data_height * data[i], data_width, data_height * data[i])
 
         ctx.fillStyle = "green";
         ctx.fill()
