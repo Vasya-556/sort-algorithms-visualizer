@@ -37,6 +37,7 @@ start_button.addEventListener("click", () => {
 
 stop_button.addEventListener("click", () => {
     console.log(stop_button.textContent);
+    display_data()
 });
 
 reset_button.addEventListener("click", () => {
@@ -60,7 +61,7 @@ generate_pseudorandom_data_button.addEventListener("click", () => {
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
 canvas.style.background = "#ff0000";
 const header = document.getElementById("header")!;
-const headerHeight = header.offsetHeight;
+const header_height = header.offsetHeight;
 let window_height = window.innerHeight;
 let window_width = window.innerWidth;
 
@@ -75,7 +76,7 @@ if (!ctx) {
 
 function resizeCanvas() {
     canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight - headerHeight;
+    canvas.height = window.innerHeight - header_height;
 }
 resizeCanvas();
 window.addEventListener("resize", resizeCanvas);
@@ -99,5 +100,28 @@ const shuffle_data = () => {
         t = data[m];
         data[m] = data[i];
         data[i] = t;
+    }
+}
+
+const clear_canvas = () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+const display_data = () => {
+    clear_canvas()
+    const innerWidth = canvas.width * 0.8;
+    const data_width = innerWidth / size;
+    
+    const innerHeight = canvas.height * 0.8;
+    const data_height = innerHeight / size;
+
+    console.log(`data height = ${data_height}`)
+
+    for (let i = 0; i < data.length; i++) {
+        ctx.beginPath();
+        ctx.rect(canvas.width * 0.1 + i * data_width, canvas.height * 0.1, data_width, data_height * data[i])
+
+        ctx.fillStyle = "green";
+        ctx.fill()
     }
 }
