@@ -20,6 +20,7 @@ const generate_pseudorandom_data_button = document.getElementById("generate-pseu
 
 let size: number = Number(size_input.value); 
 let data: number[] = [];
+let data_copy: number[] = JSON.parse(JSON.stringify(data))
 let speed: number = Number(speed_input.value);
 let ascending = true;
 let sort_algorithm_name = "Block sort"
@@ -44,9 +45,7 @@ sort_algorithm_select.addEventListener("change", () => {
 });
 
 start_button.addEventListener("click", async () => {
-    console.log(start_button.textContent);
     const sorted = await sort_result(buble_sort);
-    console.log(sorted);
     result_label.textContent = `${sorted} ms`
 });
 
@@ -55,7 +54,8 @@ stop_button.addEventListener("click", () => {
 });
 
 reset_button.addEventListener("click", () => {
-    console.log(reset_button.textContent);
+    data = JSON.parse(JSON.stringify(data_copy))
+    display_data()
 });
 
 shuffle_button.addEventListener("click", () => {
@@ -65,11 +65,13 @@ shuffle_button.addEventListener("click", () => {
 generate_random_data_button.addEventListener("click", () => {
     // console.log(generate_random_data_button.textContent);
     generate_random_data();
+    display_data()
 });
 
 generate_pseudorandom_data_button.addEventListener("click", () => {
     // console.log(generate_pseudorandom_data_button.textContent);
     generate_pseudorandom_data();
+    display_data()
 });
 
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
@@ -90,6 +92,7 @@ if (!ctx) {
 
 const generate_random_data = () => {
     data = Array.from({ length: size }, () => Math.floor(Math.random() * size) + 1);
+    data_copy = JSON.parse(JSON.stringify(data))
 }
 
 generate_random_data()
@@ -98,35 +101,10 @@ const clear_canvas = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-const display_data = (arr?: number[]) => {
-    const draw_data = arr ?? data;
-    clear_canvas()
-    const inner_width = canvas.width * 0.8;
-    const data_width = inner_width / size;
-    
-    const inner_height = canvas.height * 0.8;
-    const data_height = inner_height / size;
-
-    for (let i = 0; i < draw_data.length; i++) {
-        ctx.beginPath();
-        ctx.rect(canvas.width * 0.1 + i * data_width, canvas.height * 0.9 - data_height * draw_data[i], data_width, data_height * draw_data[i])
-
-        ctx.fillStyle = "green";
-        ctx.fill()
-    }
-}
-
-function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight - header_height;
-    display_data();
-}
-resizeCanvas();
-window.addEventListener("resize", resizeCanvas);
-
 const generate_pseudorandom_data = () => {
     data = Array.from({ length: size}, (_, i) => i + 1)   
     shuffle_data()
+    data_copy = JSON.parse(JSON.stringify(data))
 }
 
 const shuffle_data = () => {
@@ -141,6 +119,31 @@ const shuffle_data = () => {
     }
 }
 
+const display_data = () => {
+    clear_canvas()
+    const inner_width = canvas.width * 0.8;
+    const data_width = inner_width / size;
+    
+    const inner_height = canvas.height * 0.8;
+    const data_height = inner_height / size;
+
+    for (let i = 0; i < data.length; i++) {
+        ctx.beginPath();
+        ctx.rect(canvas.width * 0.1 + i * data_width, canvas.height * 0.9 - data_height * data[i], data_width, data_height * data[i])
+
+        ctx.fillStyle = "green";
+        ctx.fill()
+    }
+}
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight - header_height;
+    display_data();
+}
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 const sort_result = async (fn: () => Promise<void>): Promise<number> => {
@@ -151,17 +154,16 @@ const sort_result = async (fn: () => Promise<void>): Promise<number> => {
 };
 
 const buble_sort = async () => {
-    let data_copy: number[] = JSON.parse(JSON.stringify(data))
     let tmp: number;
 
-    for (let i = 0; i < data_copy.length - 1; i++) {
-        for (let j = 0; j < data_copy.length - 1 - i; j++) {
-            if (data_copy[j] > data_copy[j + 1]){
-                tmp = data_copy[j];
-                data_copy[j] = data_copy[j+1];
-                data_copy[j+1] = tmp
+    for (let i = 0; i < data.length - 1; i++) {
+        for (let j = 0; j < data.length - 1 - i; j++) {
+            if (data[j] > data[j + 1]){
+                tmp = data[j];
+                data[j] = data[j+1];
+                data[j+1] = tmp
                 await sleep(speed);
-                display_data(data_copy)
+                display_data()
             }
         }
     }
