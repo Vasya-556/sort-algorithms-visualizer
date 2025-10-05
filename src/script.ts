@@ -6,10 +6,10 @@ const speed_label = document.getElementById("speed-range-label") as HTMLLabelEle
 
 const asc_dsc_input = document.getElementById("asc-dsc-input") as HTMLInputElement;
 const asc_dsc_label = document.getElementById("asc-dsc-label") as HTMLLabelElement;
-let ascending = true;
 
 const sort_algorithm_select = document.getElementById("algorithm-select") as HTMLSelectElement;
-let sort_algorithm_name = "Block sort"
+
+const result_label = document.getElementById("result-time") as HTMLLabelElement;
 
 const start_button = document.getElementById("start-button") as HTMLButtonElement;
 const stop_button = document.getElementById("stop-button") as HTMLButtonElement;
@@ -20,6 +20,9 @@ const generate_pseudorandom_data_button = document.getElementById("generate-pseu
 
 let size: number = Number(size_input.value); 
 let data: number[] = [];
+let speed: number = Number(speed_input.value);
+let ascending = true;
+let sort_algorithm_name = "Block sort"
 
 size_input.addEventListener("input", () => {
     size_label.textContent = `size: ${size_input.value} elements`;
@@ -28,6 +31,7 @@ size_input.addEventListener("input", () => {
 
 speed_input.addEventListener("input", () => {
     speed_label.textContent = `speed: ${speed_input.value} ms`;
+    speed = Number(speed_input.value)
 });
 
 asc_dsc_input.addEventListener("change", () => {
@@ -41,15 +45,13 @@ sort_algorithm_select.addEventListener("change", () => {
 
 start_button.addEventListener("click", async () => {
     console.log(start_button.textContent);
-    // console.log(data);
-    // buble_sort();
     const sorted = await sort_result(buble_sort);
     console.log(sorted);
+    result_label.textContent = `${sorted} ms`
 });
 
 stop_button.addEventListener("click", () => {
     console.log(stop_button.textContent);
-    display_data()
 });
 
 reset_button.addEventListener("click", () => {
@@ -86,34 +88,11 @@ if (!ctx) {
     throw new Error("Could not get 2D context");
 }
 
-function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight - header_height;
-}
-resizeCanvas();
-window.addEventListener("resize", resizeCanvas);
-
 const generate_random_data = () => {
     data = Array.from({ length: size }, () => Math.floor(Math.random() * size) + 1);
 }
 
 generate_random_data()
-const generate_pseudorandom_data = () => {
-    data = Array.from({ length: size}, (_, i) => i + 1)   
-    shuffle_data()
-}
-
-const shuffle_data = () => {
-    let m = size, t, i;
-
-    while (m) {
-        i = Math.floor(Math.random() * m--);
-
-        t = data[m];
-        data[m] = data[i];
-        data[i] = t;
-    }
-}
 
 const clear_canvas = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -137,6 +116,31 @@ const display_data = (arr?: number[]) => {
     }
 }
 
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight - header_height;
+    display_data();
+}
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
+const generate_pseudorandom_data = () => {
+    data = Array.from({ length: size}, (_, i) => i + 1)   
+    shuffle_data()
+}
+
+const shuffle_data = () => {
+    let m = size, t, i;
+
+    while (m) {
+        i = Math.floor(Math.random() * m--);
+
+        t = data[m];
+        data[m] = data[i];
+        data[i] = t;
+    }
+}
+
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 const sort_result = async (fn: () => Promise<void>): Promise<number> => {
@@ -156,7 +160,7 @@ const buble_sort = async () => {
                 tmp = data_copy[j];
                 data_copy[j] = data_copy[j+1];
                 data_copy[j+1] = tmp
-                await sleep(1);
+                await sleep(speed);
                 display_data(data_copy)
             }
         }
