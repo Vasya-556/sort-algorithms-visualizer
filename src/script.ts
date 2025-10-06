@@ -146,7 +146,6 @@ function resizeCanvas() {
 resizeCanvas();
 window.addEventListener("resize", resizeCanvas);
 
-// const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 const sleep = (ms: number) => new Promise((resolve, reject) => {
     if (is_running){
         setTimeout(resolve, ms)
@@ -158,9 +157,7 @@ const sleep = (ms: number) => new Promise((resolve, reject) => {
 
 const sort_result = async (fn: () => Promise<void>): Promise<number> => {
     const startTime = performance.now();
-    if(is_running){
-        await fn();
-    }
+    await fn();
     const endTime = performance.now();
     return endTime - startTime;
 };
