@@ -22,8 +22,9 @@ let size: number = Number(size_input.value);
 let data: number[] = [];
 let data_copy: number[] = JSON.parse(JSON.stringify(data))
 let speed: number = Number(speed_input.value);
-let ascending = true;
-let sort_algorithm_name = "Block sort"
+let ascending:boolean = true;
+let sort_algorithm_name:string = "Block sort"
+let is_running: boolean = true;
 
 size_input.addEventListener("input", () => {
     size_label.textContent = `size: ${size_input.value} elements`;
@@ -45,12 +46,13 @@ sort_algorithm_select.addEventListener("change", () => {
 });
 
 start_button.addEventListener("click", async () => {
+    is_running = true;
     const sorted = await sort_result(buble_sort);
     result_label.textContent = `${sorted} ms`
 });
 
 stop_button.addEventListener("click", () => {
-    console.log(stop_button.textContent);
+    is_running = false;
 });
 
 reset_button.addEventListener("click", () => {
@@ -59,7 +61,7 @@ reset_button.addEventListener("click", () => {
 });
 
 shuffle_button.addEventListener("click", () => {
-    console.log(shuffle_button.textContent);
+    shuffle_data();
 });
 
 generate_random_data_button.addEventListener("click", () => {
@@ -144,11 +146,21 @@ function resizeCanvas() {
 resizeCanvas();
 window.addEventListener("resize", resizeCanvas);
 
-const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+// const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+const sleep = (ms: number) => new Promise((resolve, reject) => {
+    if (is_running){
+        setTimeout(resolve, ms)
+    } 
+    else {
+        reject(new Error("stopped"));
+    }
+});
 
 const sort_result = async (fn: () => Promise<void>): Promise<number> => {
     const startTime = performance.now();
-    await fn();
+    if(is_running){
+        await fn();
+    }
     const endTime = performance.now();
     return endTime - startTime;
 };
