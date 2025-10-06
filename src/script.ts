@@ -62,16 +62,15 @@ reset_button.addEventListener("click", () => {
 
 shuffle_button.addEventListener("click", () => {
     shuffle_data();
+    display_data()
 });
 
 generate_random_data_button.addEventListener("click", () => {
-    // console.log(generate_random_data_button.textContent);
     generate_random_data();
     display_data()
 });
 
 generate_pseudorandom_data_button.addEventListener("click", () => {
-    // console.log(generate_pseudorandom_data_button.textContent);
     generate_pseudorandom_data();
     display_data()
 });
@@ -146,12 +145,13 @@ function resizeCanvas() {
 resizeCanvas();
 window.addEventListener("resize", resizeCanvas);
 
-const sleep = (ms: number) => new Promise((resolve, reject) => {
-    if (is_running){
-        setTimeout(resolve, ms)
-    } 
-    else {
-        reject(new Error("stopped"));
+const sleep = (ms: number) => new Promise<void>((resolve, reject) => {
+    if (!is_running) return reject(new Error("stopped"));
+
+    if (ms <= 0) {
+        resolve();
+    } else {
+        setTimeout(resolve, ms);
     }
 });
 
