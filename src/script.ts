@@ -22,7 +22,7 @@ let size: number = Number(size_input.value);
 let data: number[] = [];
 let data_copy: number[] = JSON.parse(JSON.stringify(data))
 let speed: number = Number(speed_input.value);
-let ascending:boolean = true;
+let is_ascending:boolean = asc_dsc_input.checked;
 let sort_algorithm_name:string = "Block sort"
 let is_running: boolean = true;
 
@@ -37,8 +37,8 @@ speed_input.addEventListener("input", () => {
 });
 
 asc_dsc_input.addEventListener("change", () => {
-    asc_dsc_input.checked? asc_dsc_label.textContent = "Descending" : asc_dsc_label.textContent = "Ascending"; 
-    ascending = asc_dsc_input.checked;
+    asc_dsc_input.checked? asc_dsc_label.textContent = "Ascending" : asc_dsc_label.textContent = "Descending"; 
+    is_ascending = asc_dsc_input.checked;
 });
 
 sort_algorithm_select.addEventListener("change", () => {
@@ -167,7 +167,10 @@ const buble_sort = async () => {
 
     for (let i = 0; i < data.length - 1; i++) {
         for (let j = 0; j < data.length - 1 - i; j++) {
-            if (data[j] > data[j + 1]){
+            const condition = is_ascending
+            ? data[j] > data[j + 1]
+            : data[j] < data[j + 1];
+            if (condition){
                 tmp = data[j];
                 data[j] = data[j+1];
                 data[j+1] = tmp
