@@ -26,6 +26,10 @@ let is_ascending:boolean = asc_dsc_input.checked;
 let sort_algorithm_name:string = "Block sort"
 let is_running: boolean = true;
 
+const algorithms: Record<string, () => Promise<void>> = {
+    "Bubble sort": () => buble_sort(),
+};
+
 size_input.addEventListener("input", () => {
     size_label.textContent = `size: ${size_input.value} elements`;
     size = Number(size_input.value);
@@ -47,7 +51,9 @@ sort_algorithm_select.addEventListener("change", () => {
 
 start_button.addEventListener("click", async () => {
     is_running = true;
-    const sorted = await sort_result(buble_sort);
+
+    const algorithm2 = algorithms[sort_algorithm_name] || buble_sort;
+    const sorted = await sort_result(algorithm2);
     result_label.textContent = `${sorted} ms`
 });
 
@@ -178,5 +184,20 @@ const buble_sort = async () => {
                 display_data()
             }
         }
+    }
+}
+
+const exchange_sort = async () => {
+    let tmp: number;
+
+    for (let i = 0; i < data.length - 1; i++) {
+        for (let j = i+1; j < data.length; j++) {
+            if (data[i] > data[j]){
+                tmp = data[i];
+                data[i] = data[j];
+                data[j] = tmp
+            }
+        }
+        
     }
 }
