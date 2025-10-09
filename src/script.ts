@@ -27,7 +27,32 @@ let sort_algorithm_name:string = "Block sort"
 let is_running: boolean = true;
 
 const algorithms: Record<string, () => Promise<void>> = {
-    "Bubble sort": () => buble_sort(),
+    "Block sort": () => block_sort(),
+    "Bubble sort": () => bubble_sort(),
+    "Cocktail shaker sort": () => cocktail_sort(),
+    "Comb sort": () => comb_sort(),
+    "Crumsort": () => crumsort_sort(),
+    "Cubesort": () => cubesort_sort(),
+    "Cycle sort": () => cycle_sort(),
+    "Exchange sort": () => exchange_sort(),
+    "Fluxsort": () => fluxsort_sort(),
+    "Gnome sort": () => gnome_sort(),
+    "Heap sort": () => heap_sort(),
+    "In-place merge sort": () => inplace_merge_sort(),
+    "Insertion sort": () => insertion_sort(),
+    "Introsort": () => introsort_sort(),
+    "Library sort": () => library_sort(),
+    "Merge sort": () => merge_sort(),
+    "Odd–even sort": () => odd_even_sort(),
+    "Patience sort": () => patience_sort(),
+    "Quicksort": () => quicksort_sort(),
+    "Selection sort": () => selection_sort(),
+    "Shellsort": () => shellsort_sort(),
+    "Smoothsort": () => smoothsort_sort(),
+    "Strand sort": () => strand_sort(),
+    "Timsort": () => timsort_sort(),
+    "Tournament sort": () => tournament_sort(),
+    "Tree sort": () => tree_sort(),
 };
 
 size_input.addEventListener("input", () => {
@@ -52,7 +77,7 @@ sort_algorithm_select.addEventListener("change", () => {
 start_button.addEventListener("click", async () => {
     is_running = true;
 
-    const algorithm2 = algorithms[sort_algorithm_name] || buble_sort;
+    const algorithm2 = algorithms[sort_algorithm_name] || bubble_sort;
     const sorted = await sort_result(algorithm2);
     result_label.textContent = `${sorted} ms`
 });
@@ -168,7 +193,12 @@ const sort_result = async (fn: () => Promise<void>): Promise<number> => {
     return endTime - startTime;
 };
 
-const buble_sort = async () => {
+const step = async () => {
+    await sleep(speed);
+    display_data()
+}
+
+const bubble_sort = async () => {
     let tmp: number;
 
     for (let i = 0; i < data.length - 1; i++) {
@@ -180,8 +210,7 @@ const buble_sort = async () => {
                 tmp = data[j];
                 data[j] = data[j+1];
                 data[j+1] = tmp
-                await sleep(speed);
-                display_data()
+                await step()
             }
         }
     }
@@ -196,8 +225,105 @@ const exchange_sort = async () => {
                 tmp = data[i];
                 data[i] = data[j];
                 data[j] = tmp
+                await step();
             }
         }
         
     }
+}
+
+const cycle_sort = async () => {
+
+}
+
+const gnome_sort = async () => {
+
+}
+
+const selection_sort = async () => {
+
+}
+
+const insertion_sort = async () => {
+
+}
+
+const odd_even_sort = async () => {
+
+}
+
+const cocktail_sort = async () => {
+
+}
+
+const comb_sort = async () => {
+    
+}
+
+const shellsort_sort = async () => {
+    
+}
+
+const tree_sort = async () => {
+    
+}
+
+const quicksort_sort = async () => {
+
+}
+
+const merge_sort = async () => {
+    
+}
+
+const inplace_merge_sort = async () => {
+    
+}
+
+const heap_sort = async () => {
+    
+}
+
+const patience_sort = async () => {
+    
+}
+
+const strand_sort = async () => {
+    
+}
+
+const tournament_sort = async () => {
+    
+}
+
+const library_sort = async () => {
+    
+}
+
+const timsort_sort = async () => {
+    
+}
+
+const smoothsort_sort = async () => {
+    
+}
+
+const cubesort_sort = async () => {
+    
+}
+
+const crumsort_sort = async () => {
+    
+}
+
+const fluxsort_sort = async () => {
+    
+}
+
+const introsort_sort = async () => {
+    
+}
+
+const block_sort = async () => {
+    
 }
