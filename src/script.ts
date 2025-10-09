@@ -28,6 +28,7 @@ let is_running: boolean = true;
 
 const algorithms: Record<string, () => Promise<void>> = {
     "Block sort": () => block_sort(),
+    "Bogo sort": () => bogo_sort(),
     "Bubble sort": () => bubble_sort(),
     "Cocktail shaker sort": () => cocktail_sort(),
     "Comb sort": () => comb_sort(),
@@ -236,20 +237,88 @@ const cycle_sort = async () => {
 
 }
 
-const gnome_sort = async () => {
+const bogo_sort = async () => {
 
+}
+
+const gnome_sort = async () => {
+    let i: number = 0;
+    let tmp: number;
+
+    while (i < (data.length)){
+        if (i === 0 || data[i] >= data[i-1]) {
+            i += 1
+        }
+        else {
+            tmp = data[i]
+            data[i] = data[i-1]
+            data[i-1] = tmp
+            i -= 1
+            await step();
+        }
+    }
 }
 
 const selection_sort = async () => {
+    let min_index:number;
+    let tmp: number;
 
+    for (let i = 0; i < data.length - 1; i++) {
+        min_index = i;
+        for (let j = i+1; j < data.length; j++) {
+            if (data[j] < data[min_index]){
+                min_index = j
+            }
+        }
+        tmp = data[i]
+        data[i] = data[min_index]
+        data[min_index] = tmp
+        await step();
+    }
 }
 
 const insertion_sort = async () => {
+    let key: number;
+    let j: number;
 
+    for (let i = 1; i < data.length; i++) {
+        key = data[i];
+        j = i-1;
+        while (j >= 0 && data[j] > key) {
+            data[j+1] = data[j]
+            j -= 1;
+            await step();
+        }
+        data[j+1] = key
+        await step();
+    }
 }
 
 const odd_even_sort = async () => {
+    let sorted: boolean = false;
+    let tmp: number;
 
+    while (!sorted) {
+        sorted = true;
+        for (let i = 1; i < data.length -1; i+=1) {
+            if (data[i] > data[i+1]) {
+                tmp = data[i]
+                data[i] = data[i+1]
+                data[i+1] = tmp;
+                sorted = false
+                await step();
+            }
+        }
+        for (let i = 0; i < data.length; i+=2) {
+            if (data[i] > data[i+1]) {
+                tmp = data[i]
+                data[i] = data[i+1]
+                data[i+1] = tmp;
+                sorted = false
+                await step();
+            }
+        }
+    }
 }
 
 const cocktail_sort = async () => {
