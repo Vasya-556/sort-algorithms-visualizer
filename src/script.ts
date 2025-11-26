@@ -199,18 +199,20 @@ const step = async () => {
     display_data()
 }
 
-const bubble_sort = async () => {
-    let tmp: number;
+const swap = (arr: number[], i: number, j: number) => {
+    let tmp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = tmp;
+}
 
+const bubble_sort = async () => {
     for (let i = 0; i < data.length - 1; i++) {
         for (let j = 0; j < data.length - 1 - i; j++) {
             const condition = is_ascending
             ? data[j] > data[j + 1]
             : data[j] < data[j + 1];
             if (condition){
-                tmp = data[j];
-                data[j] = data[j+1];
-                data[j+1] = tmp
+                swap(data, j, j+1)
                 await step()
             }
         }
@@ -218,14 +220,10 @@ const bubble_sort = async () => {
 }
 
 const exchange_sort = async () => {
-    let tmp: number;
-
     for (let i = 0; i < data.length - 1; i++) {
         for (let j = i+1; j < data.length; j++) {
             if (data[i] > data[j]){
-                tmp = data[i];
-                data[i] = data[j];
-                data[j] = tmp
+                swap(data, i, j)
                 await step();
             }
         }
@@ -234,7 +232,32 @@ const exchange_sort = async () => {
 }
 
 const cycle_sort = async () => {
+    const n = data.length;
 
+    for (let cycleStart = 0; cycleStart < n - 1; cycleStart++) {
+        let item = data[cycleStart];
+        let pos = cycleStart;
+
+        for (let i = cycleStart + 1; i < n; i++) {
+            if (data[i] < item) pos++;
+        }
+        if (pos === cycleStart) continue;
+
+        while (item === data[pos]) pos++;
+
+        [item, data[pos]] = [data[pos], item];
+        await step();
+        while (pos !== cycleStart) {
+            pos = cycleStart;
+            for (let i = cycleStart + 1; i < n; i++) {
+                if (data[i] < item) pos++;
+            }
+            while (item === data[pos]) pos++;
+
+            [item, data[pos]] = [data[pos], item];
+            await step();
+        }
+    }
 }
 
 const bogo_sort = async () => {
@@ -243,16 +266,13 @@ const bogo_sort = async () => {
 
 const gnome_sort = async () => {
     let i: number = 0;
-    let tmp: number;
 
     while (i < (data.length)){
         if (i === 0 || data[i] >= data[i-1]) {
             i += 1
         }
         else {
-            tmp = data[i]
-            data[i] = data[i-1]
-            data[i-1] = tmp
+            swap(data, i, i-1)
             i -= 1
             await step();
         }
@@ -261,7 +281,6 @@ const gnome_sort = async () => {
 
 const selection_sort = async () => {
     let min_index:number;
-    let tmp: number;
 
     for (let i = 0; i < data.length - 1; i++) {
         min_index = i;
@@ -270,9 +289,7 @@ const selection_sort = async () => {
                 min_index = j
             }
         }
-        tmp = data[i]
-        data[i] = data[min_index]
-        data[min_index] = tmp
+        swap(data, i, min_index)
         await step();
     }
 }
@@ -296,24 +313,19 @@ const insertion_sort = async () => {
 
 const odd_even_sort = async () => {
     let sorted: boolean = false;
-    let tmp: number;
 
     while (!sorted) {
         sorted = true;
         for (let i = 1; i < data.length -1; i+=1) {
             if (data[i] > data[i+1]) {
-                tmp = data[i]
-                data[i] = data[i+1]
-                data[i+1] = tmp;
+                swap(data, i, i+1)
                 sorted = false
                 await step();
             }
         }
         for (let i = 0; i < data.length; i+=2) {
             if (data[i] > data[i+1]) {
-                tmp = data[i]
-                data[i] = data[i+1]
-                data[i+1] = tmp;
+                swap(data, i, i+1)
                 sorted = false
                 await step();
             }
@@ -322,11 +334,56 @@ const odd_even_sort = async () => {
 }
 
 const cocktail_sort = async () => {
+    let start = 0;
+    let end = data.length - 1;
+    let swapped = true;
 
+    while (swapped) {
+        swapped = false;
+        for (let i = start; i < end; i++) {
+            if (data[i] > data[i + 1]) {
+                swap(data, i, i + 1);
+                swapped = true;
+                await step();
+            }
+        }
+
+        if (!swapped) break;
+        swapped = false;
+        end--;
+
+        for (let i = end; i > start; i--) {
+            if (data[i] < data[i - 1]) {
+                swap(data, i, i - 1);
+                swapped = true;
+                await step();
+            }
+        }
+        start++;
+    }
 }
 
 const comb_sort = async () => {
-    
+    let gap = data.length;
+    const shrink = 1.3;
+    let sorted = false;
+
+    while (!sorted) {
+        gap = Math.floor(gap / shrink);
+
+        if (gap <= 1) {
+            gap = 1;
+            sorted = true;
+        }
+
+        for (let i = 0; i + gap < data.length; i++) {
+            if (data[i] > data[i + gap]) {
+                swap(data, i, i + gap);
+                sorted = false;
+                await step();
+            }
+        }
+    }
 }
 
 const shellsort_sort = async () => {
@@ -342,7 +399,7 @@ const quicksort_sort = async () => {
 }
 
 const merge_sort = async () => {
-    
+
 }
 
 const inplace_merge_sort = async () => {
