@@ -585,9 +585,56 @@ const heapify = async (i: number, heapsize: number) => {
     }
 }
 
-const patience_sort = async () => {
-    
+class Stack {
+    private items:number[]=[];
+    push(x:number){this.items.push(x);}
+    pop(){return this.items.pop();}
+    top(){return this.items[this.items.length-1];}
+    is_empty(){return this.items.length===0;}
 }
+
+const patience_sort = async () => {
+    let piles:Stack[]=[];
+
+    for(let x of data){
+        let placed=false;
+        for(let pile of piles){
+            if(!pile.is_empty() && pile.top()>=x){
+                pile.push(x);
+                placed=true;
+                await step();
+                break;
+            }
+        }
+        if(!placed){
+            let p=new Stack();
+            p.push(x);
+            piles.push(p);
+            await step();
+        }
+    }
+
+    let result:number[]=[];
+    while(piles.length>0){
+        let min=Infinity,idx=0;
+        for(let i=0;i<piles.length;i++){
+            let t=piles[i].top();
+            if(t<min){min=t;idx=i;}
+            await step();
+        }
+        result.push(piles[idx].pop()!);
+        await step();
+        if(piles[idx].is_empty()){
+            piles.splice(idx,1);
+            await step();
+        }
+    }
+
+    for(let i=0;i<result.length;i++){
+        data[i]=result[i];
+        await step();
+    }
+};
 
 const strand_sort = async () => {
     
@@ -598,8 +645,32 @@ const tournament_sort = async () => {
 }
 
 const library_sort = async () => {
-    
-}
+    let n = data.length * 2;
+    let B:(number|null)[] = new Array(n).fill(null);
+
+    for(let x of data){
+        let low=0, high=n-1;
+        while(low<=high){
+            let mid=(low+high)>>1;
+            if(B[mid]===null || B[mid]>x) high=mid-1;
+            else low=mid+1;
+        }
+        let p=low;
+        while(p<n && B[p]!==null) p++;
+        let i=p;
+        while(i>low){B[i]=B[i-1];i--;}
+        B[low]=x;
+        await step();
+    }
+
+    let k=0;
+    for(let i=0;i<n;i++){
+        if(B[i]!==null){
+            data[k++]=B[i]!;
+            await step();
+        }
+    }
+};
 
 const timsort_sort = async () => {
     
@@ -618,13 +689,104 @@ const crumsort = async () => {
 }
 
 const fluxsort_sort = async () => {
-    
-}
+    let n = data.length;
+    if (n === 0) return;
+    let min_val = Math.min(...data);
+    let max_val = Math.max(...data);
+    let buckets: number[][] = Array.from({ length: n }, () => []);
+
+    for (let i = 0; i < n; i++) {
+        let index = Math.floor(((data[i] - min_val) / (max_val - min_val + 1)) * n);
+        if (index >= n) index = n - 1;
+        buckets[index].push(data[i]);
+        await step();
+    }
+
+    for (let bucket of buckets) {
+        await insertion_sort_bucket(bucket);
+    }
+
+    let k = 0;
+    for (let bucket of buckets) {
+        for (let x of bucket) {
+            data[k++] = x;
+            await step();
+        }
+    }
+};
+
+const insertion_sort_bucket = async (bucket: number[]) => {
+    for (let i = 1; i < bucket.length; i++) {
+        let key = bucket[i];
+        let j = i - 1;
+        while (j >= 0 && bucket[j] > key) {
+            bucket[j + 1] = bucket[j];
+            j--;
+            await step();
+        }
+        bucket[j + 1] = key;
+        await step();
+    }
+};
+
 
 const introsort = async () => {
     
 }
 
 const block_sort = async () => {
-    
-}
+    let n = data.length;
+    let block_size = Math.floor(Math.sqrt(n));
+    let blocks: number[][] = [];
+
+    for (let i = 0; i < n; i += block_size) {
+        let end = Math.min(i + block_size - 1, n - 1);
+        let block = data.slice(i, end + 1);
+        await insertion_sort_bucket(block);
+        blocks.push(block);
+    }
+
+    while (blocks.length > 1) {
+        let new_blocks: number[][] = [];
+        let i = 0;
+        while (i < blocks.length) {
+            if (i + 1 < blocks.length) {
+                new_blocks.push(await merge_lists(blocks[i], blocks[i + 1]));
+                i += 2;
+            } else {
+                new_blocks.push(blocks[i]);
+                i += 1;
+            }
+        }
+        blocks = new_blocks;
+    }
+
+    for (let i = 0; i < data.length; i++) {
+        data[i] = blocks[0][i];
+        await step();
+    }
+};
+
+const merge_lists = async (L1: number[], L2: number[]): Promise<number[]> => {
+    let merged: number[] = [];
+    let i = 0;
+    let j = 0;
+
+    while (i < L1.length && j < L2.length) {
+        if (L1[i] <= L2[j]) merged.push(L1[i++]);
+        else merged.push(L2[j++]);
+        await step();
+    }
+
+    while (i < L1.length) {
+        merged.push(L1[i++]);
+        await step();
+    }
+
+    while (j < L2.length) {
+        merged.push(L2[j++]);
+        await step();
+    }
+
+    return merged;
+};
