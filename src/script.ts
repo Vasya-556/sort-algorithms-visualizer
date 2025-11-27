@@ -32,24 +32,24 @@ const algorithms: Record<string, () => Promise<void>> = {
     "Bubble sort": () => bubble_sort(),
     "Cocktail shaker sort": () => cocktail_sort(),
     "Comb sort": () => comb_sort(),
-    "Crumsort": () => crumsort_sort(),
-    "Cubesort": () => cubesort_sort(),
+    "Crumsort": () => crumsort(),
+    "Cubesort": () => cubesort(),
     "Cycle sort": () => cycle_sort(),
     "Exchange sort": () => exchange_sort(),
     "Fluxsort": () => fluxsort_sort(),
     "Gnome sort": () => gnome_sort(),
     "Heap sort": () => heap_sort(),
-    "In-place merge sort": () => inplace_merge_sort(),
+    "In-place merge sort": () => in_place_merge_sort(),
     "Insertion sort": () => insertion_sort(),
-    "Introsort": () => introsort_sort(),
+    "Introsort": () => introsort(),
     "Library sort": () => library_sort(),
     "Merge sort": () => merge_sort(),
     "Odd–even sort": () => odd_even_sort(),
     "Patience sort": () => patience_sort(),
-    "Quicksort": () => quicksort_sort(),
+    "Quicksort": () => quicksort(),
     "Selection sort": () => selection_sort(),
-    "Shellsort": () => shellsort_sort(),
-    "Smoothsort": () => smoothsort_sort(),
+    "Shellsort": () => shellsort(),
+    "Smoothsort": () => smoothsort(),
     "Strand sort": () => strand_sort(),
     "Timsort": () => timsort_sort(),
     "Tournament sort": () => tournament_sort(),
@@ -398,7 +398,7 @@ const comb_sort = async () => {
     }
 }
 
-const shellsort_sort = async () => {
+const shellsort = async () => {
     let n: number = data.length
     let gap:number = Math.floor(n / 2);
     let tmp: number;
@@ -461,11 +461,11 @@ const tree_sort = async () => {
     }
 }
 
-const quicksort_sort = async (low: number = 0, high: number = data.length - 1) => {
+const quicksort = async (low: number = 0, high: number = data.length - 1) => {
     if (low < high){
         let pi:number = await partition(low, high)
-        quicksort_sort(low, pi-1)
-        quicksort_sort(pi+1, high)
+        quicksort(low, pi-1)
+        quicksort(pi+1, high)
     }
 }
 
@@ -511,13 +511,13 @@ const merge_sort = async (start = 0, end = data.length - 1): Promise<void> => {
     }
 }
 
-const inplace_merge_sort = async (start:number = 0, end:number = data.length - 1) => {
+const in_place_merge_sort = async (start:number = 0, end:number = data.length - 1) => {
     if (start >= end) {
         return
     }
     let mid = Math.floor((start+end)/2)
-    await inplace_merge_sort(start,mid);
-    await inplace_merge_sort(mid+1,end);
+    await in_place_merge_sort(start,mid);
+    await in_place_merge_sort(mid+1,end);
     await inplace_merge(start,mid,end);
 }
 
@@ -605,15 +605,15 @@ const timsort_sort = async () => {
     
 }
 
-const smoothsort_sort = async () => {
+const smoothsort = async () => {
     
 }
 
-const cubesort_sort = async () => {
+const cubesort = async () => {
     
 }
 
-const crumsort_sort = async () => {
+const crumsort = async () => {
     
 }
 
@@ -621,7 +621,7 @@ const fluxsort_sort = async () => {
     
 }
 
-const introsort_sort = async () => {
+const introsort = async () => {
     
 }
 
