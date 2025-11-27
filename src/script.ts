@@ -260,8 +260,20 @@ const cycle_sort = async () => {
     }
 }
 
-const bogo_sort = async () => {
+const is_sorted = ():boolean => {
+    for (let i = 0; i < data.length - 1; i++) {
+        if (data[i] > data[i + 1]){
+            return false
+        }
+    }
+    return true;
+}
 
+const bogo_sort = async () => {
+    while (!is_sorted()) {
+        shuffle_data()
+        await step();
+    }
 }
 
 const gnome_sort = async () => {
@@ -334,9 +346,9 @@ const odd_even_sort = async () => {
 }
 
 const cocktail_sort = async () => {
-    let start = 0;
-    let end = data.length - 1;
-    let swapped = true;
+    let start:number = 0;
+    let end:number = data.length - 1;
+    let swapped:boolean = true;
 
     while (swapped) {
         swapped = false;
@@ -364,9 +376,9 @@ const cocktail_sort = async () => {
 }
 
 const comb_sort = async () => {
-    let gap = data.length;
-    const shrink = 1.3;
-    let sorted = false;
+    let gap:number = data.length;
+    const shrink:number = 1.3;
+    let sorted:boolean = false;
 
     while (!sorted) {
         gap = Math.floor(gap / shrink);
@@ -387,27 +399,190 @@ const comb_sort = async () => {
 }
 
 const shellsort_sort = async () => {
-    
+    let n: number = data.length
+    let gap:number = Math.floor(n / 2);
+    let tmp: number;
+    let j: number;
+    while (gap > 0) {
+        for (let i = gap; i < n; i++) {
+            tmp = data[i]
+            j = i;
+            while (j >= gap && data[j-gap] > tmp) {
+                data[j] = data[j-gap]
+                j = j - gap;
+                await step();
+            }
+            data[j] = tmp
+            await step();
+        }
+        gap = Math.floor(gap / 2);
+    }
+}
+
+class TreeNode {
+    private value: number
+    private left: TreeNode | null
+    private right: TreeNode | null
+
+    constructor(value: number) {
+        this.value = value
+        this.left = null
+        this.right = null
+    }
+
+    public insert(x: number): void {
+        if (x < this.value) {
+            if (this.left === null) this.left = new TreeNode(x)
+            else this.left.insert(x)
+        } else {
+            if (this.right === null) this.right = new TreeNode(x)
+            else this.right.insert(x)
+        }
+    }
+
+    public in_order_traverse(): number[] {
+        let result: number[] = []
+        if (this.left !== null) result.push(...this.left.in_order_traverse())
+        result.push(this.value)
+        if (this.right !== null) result.push(...this.right.in_order_traverse())
+        return result
+    }
 }
 
 const tree_sort = async () => {
+    if (data.length === 0) return
+    let root = new TreeNode(data[0])
+    for (let i = 1; i < data.length; i++) root.insert(data[i])
+
+    const sorted = root.in_order_traverse()
+    for (let i = 0; i < sorted.length; i++) {
+        data[i] = sorted[i]
+        await step()
+    }
+}
+
+const quicksort_sort = async (low: number = 0, high: number = data.length - 1) => {
+    if (low < high){
+        let pi:number = await partition(low, high)
+        quicksort_sort(low, pi-1)
+        quicksort_sort(pi+1, high)
+    }
+}
+
+const partition = async (low: number, high: number):Promise<number> => {
+    let pivot: number = data[high]
+    let i = low - 1;
+    for (let j = low; j < high; j++) {
+        if (data[j] <= pivot){
+            i+=1
+            swap(data, i, j);
+            await step();
+        }
+    }
+    swap(data, i+1, high)
+    await step();
+    return i+1
+}
+
+const merge_sort = async (start = 0, end = data.length - 1): Promise<void> => {
+    if (start >= end) return
+
+    const mid = Math.floor((start + end) / 2)
+    await merge_sort(start, mid)
+    await merge_sort(mid + 1, end)
+
+    const temp: number[] = []
+    let i = start, j = mid + 1
+
+    while (i <= mid && j <= end) {
+        if (is_ascending ? data[i] <= data[j] : data[i] >= data[j]) {
+            temp.push(data[i++])
+        } else {
+            temp.push(data[j++])
+        }
+    }
+
+    while (i <= mid) temp.push(data[i++])
+    while (j <= end) temp.push(data[j++])
+
+    for (let k = 0; k < temp.length; k++) {
+        data[start + k] = temp[k]
+        await step()
+    }
+}
+
+const inplace_merge_sort = async (start:number = 0, end:number = data.length - 1) => {
+    if (start >= end) {
+        return
+    }
+    let mid = Math.floor((start+end)/2)
+    await inplace_merge_sort(start,mid);
+    await inplace_merge_sort(mid+1,end);
+    await inplace_merge(start,mid,end);
+}
+
+const inplace_merge = async (start: number, mid: number, end: number) => {
+    let i: number = start;
+    let j: number = mid + 1;
+    let value:number;
+    let index:number;
     
-}
-
-const quicksort_sort = async () => {
-
-}
-
-const merge_sort = async () => {
-
-}
-
-const inplace_merge_sort = async () => {
-    
+    while (i <= mid && j <= end) {
+        if (data[i] <= data[j]){
+            i+=1
+        }
+        else {
+            value = data[j]
+            index = j
+            while (index != i) {
+                data[index] = data[index -1]
+                index -= 1
+                await step()
+            }
+            data[i] = value
+            i += 1
+            mid += 1
+            j += 1
+            await step()
+        }
+    }
 }
 
 const heap_sort = async () => {
-    
+    let n:number = data.length;
+    await build_max_heap(n); 
+
+    for (let i = n-1; i >= 1; i--) {
+        swap(data, 0, i)
+        await step();
+        await heapify(0, i)
+    }
+}
+
+const build_max_heap = async (n:number) => {
+    for (let i = Math.floor(n/2)-1; i >= 0; i--) {
+        await heapify(i, n);
+    }
+}
+
+const heapify = async (i: number, heapsize: number) => {
+    let largest:number = i;
+    let left: number = 2 * i + 1;
+    let right: number = 2 * i + 2;
+
+    if (left < heapsize && data[left] > data[largest]){
+        largest = left
+    }
+
+    if (right < heapsize && data[right] > data[largest]){
+        largest = right
+    }
+
+    if (largest != i){
+        swap(data, i, largest);
+        await step();
+        await heapify(largest, heapsize)
+    }
 }
 
 const patience_sort = async () => {
