@@ -51,7 +51,7 @@ const algorithms: Record<string, () => Promise<void>> = {
     "Shellsort": () => shellsort(),
     "Smoothsort": () => smoothsort(),
     "Strand sort": () => strand_sort(),
-    "Timsort": () => timsort_sort(),
+    "Timsort": () => timsort(),
     "Tournament sort": () => tournament_sort(),
     "Tree sort": () => tree_sort(),
 };
@@ -447,6 +447,30 @@ class TreeNode {
         if (this.right !== null) result.push(...this.right.in_order_traverse())
         return result
     }
+
+    public get_value ():number {
+        return this.value;
+    }
+
+    public get_left (): TreeNode | null {
+        return this.left;
+    }
+
+    public get_right (): TreeNode | null {
+        return this.right;
+    }
+
+    public set_value (x: number):void {
+        this.value = x;
+    }
+
+    public set_left (x: TreeNode | null):void {
+        this.left = x;
+    }
+
+    public set_right (x: TreeNode | null):void {
+        this.right = x;
+    }
 }
 
 const tree_sort = async () => {
@@ -637,11 +661,87 @@ const patience_sort = async () => {
 };
 
 const strand_sort = async () => {
-    
+    let result:number[] = [];
+
+    while (data.length > 0) {
+        let sublist:number[] = [data.shift()!];
+        await step();
+
+        let i = 0;
+        while (i < data.length) {
+            if (data[i] > sublist[sublist.length-1]) {
+                sublist.push(data.splice(i,1)[0]);
+                await step();
+            } 
+            else {
+                i++;
+            }
+        }
+
+        result = await merge_lists(result, sublist);
+    }
+
+    for (let i = 0; i < result.length; i++) {
+        data[i] = result[i];
+        await step();
+    }
 }
 
 const tournament_sort = async () => {
-    
+    let nodes: TreeNode[] = data.map(x => new TreeNode(x))
+
+    while (nodes.length > 1) {
+        let new_nodes: TreeNode[] = []
+        for (let i = 0; i < nodes.length; ) {
+            if (i + 1 < nodes.length) {
+                let a = nodes[i]
+                let b = nodes[i + 1]
+                let p = new TreeNode(Math.min(a.get_value(), b.get_value()))
+                p.set_left(a)
+                p.set_right(b)
+                new_nodes.push(p)
+                i += 2
+            } else {
+                new_nodes.push(nodes[i])
+                i++
+            }
+        }
+        nodes = new_nodes
+    }
+
+    let root = nodes[0]
+    let result: number[] = []
+
+    while (root.get_value() !== Infinity) {
+        result.push(root.get_value())
+        await replace_min_with_infinity(root)
+        await step()
+    }
+
+    for (let i = 0; i < result.length; i++) {
+        data[i] = result[i]
+        await step()
+    }
+}
+
+const replace_min_with_infinity = async (node: TreeNode): Promise<void> => {
+    let L = node.get_left()
+    let R = node.get_right()
+
+    if (!L && !R) {
+        node.set_value(Infinity)
+        return
+    }
+
+    if (L && (!R || L.get_value() <= R.get_value())) {
+        await replace_min_with_infinity(L)
+    } else if (R) {
+        await replace_min_with_infinity(R)
+    }
+
+    let lv = L ? L.get_value() : Infinity
+    let rv = R ? R.get_value() : Infinity
+    node.set_value(Math.min(lv, rv))
 }
 
 const library_sort = async () => {
@@ -672,20 +772,266 @@ const library_sort = async () => {
     }
 };
 
-const timsort_sort = async () => {
-    
+const timsort = async () => {
+    let min_run = 32;
+    for (let start = 0; start < data.length; start += min_run) {
+        let end = Math.min(start + min_run - 1, data.length - 1);
+        await insertion_sort_range(start, end);
+    }
+
+    let size = min_run;
+    while (size < data.length) {
+        let left = 0;
+        while (left < data.length) {
+            let mid = Math.min(left + size - 1, data.length - 1);
+            let right = Math.min(left + 2 * size - 1, data.length - 1);
+            await merge_range(left, mid, right);
+            left += 2 * size;
+        }
+        size *= 2;
+    }
+}
+
+const insertion_sort_range = async (start: number, end: number) => {
+    for (let i = start + 1; i <= end; i++) {
+        let key = data[i];
+        let j = i - 1;
+        while (j >= start && data[j] > key) {
+            data[j + 1] = data[j];
+            j--;
+            await step();
+        }
+        data[j + 1] = key;
+        await step();
+    }
+}
+
+const merge_range = async (left: number, mid: number, right: number) => {
+    let L = data.slice(left, mid + 1);
+    let R = data.slice(mid + 1, right + 1);
+    let i = 0, j = 0, k = left;
+
+    while (i < L.length && j < R.length) {
+        if (L[i] <= R[j]) {
+            data[k] = L[i++];
+        } else {
+            data[k] = R[j++];
+        }
+        k++;
+        await step();
+    }
+
+    while (i < L.length) {
+        data[k++] = L[i++];
+        await step();
+    }
+
+    while (j < R.length) {
+        data[k++] = R[j++];
+        await step();
+    }
 }
 
 const smoothsort = async () => {
-    
+    const LP = [
+        1, 1, 3, 5, 9, 15, 25, 41, 67, 109, 177, 287, 465, 753,
+        1219, 1973, 3193, 5167, 8361, 13529, 21891, 35421, 57313, 92735,
+        150049, 242785, 392835, 635621, 1028457, 1664079, 2692537,
+        4356617, 7049155, 11405773, 18454929, 29860703, 48315633, 78176337,
+        126491971, 204668309, 331160281, 535828591, 866988873
+    ];
+
+    const trailingzeroes = (v: number) => {
+        const MultiplyDeBruijnBitPosition = [
+             0,  1, 28,  2, 29, 14, 24, 3,
+            30, 22, 20, 15, 25, 17,  4, 8,
+            31, 27, 13, 23, 21, 19, 16, 7,
+            26, 12, 18,  6, 11,  5, 10, 9
+        ];
+        return MultiplyDeBruijnBitPosition[(((v & -v) * 0x077CB531) >>> 27) & 0x1f];
+    };
+
+    const sift = async (m: number[], pshift: number, head: number) => {
+        let val = m[head];
+        while (pshift > 1) {
+            const rt = head - 1;
+            const lf = head - 1 - LP[pshift - 2];
+            if (val >= m[lf] && val >= m[rt]) break;
+            if (m[lf] >= m[rt]) {
+                m[head] = m[lf];
+                head = lf;
+                pshift--;
+            } else {
+                m[head] = m[rt];
+                head = rt;
+                pshift -= 2;
+            }
+            await step();
+        }
+        m[head] = val;
+        await step();
+    };
+
+    const trinkle = async (m: number[], p: number, pshift: number, head: number, trusty: boolean) => {
+        let val = m[head];
+        while (p !== 1) {
+            const stepson = head - LP[pshift];
+            if (m[stepson] <= val) break;
+            if (!trusty && pshift > 1) {
+                const rt = head - 1;
+                const lf = head - 1 - LP[pshift - 2];
+                if (m[rt] >= m[stepson] || m[lf] >= m[stepson]) break;
+            }
+            m[head] = m[stepson];
+            head = stepson;
+            const trail = trailingzeroes(p & ~1);
+            p >>>= trail;
+            pshift += trail;
+            trusty = false;
+            await step();
+        }
+        if (!trusty) {
+            m[head] = val;
+            await step();
+            await sift(m, pshift, head);
+        }
+    };
+
+    const sort = async (m: number[]) => {
+        let head = 0;
+        let p = 1;
+        let pshift = 1;
+
+        while (head < m.length) {
+            if ((p & 3) === 3) {
+                await sift(m, pshift, head);
+                p >>>= 2;
+                pshift += 2;
+            } else {
+                if (LP[pshift - 1] > m.length - head) await trinkle(m, p, pshift, head, false);
+                else await sift(m, pshift, head);
+
+                if (pshift === 1) {
+                    p <<= 1;
+                    pshift--;
+                } else {
+                    p <<= (pshift - 1);
+                    pshift = 1;
+                }
+            }
+            p |= 1;
+            head++;
+        }
+
+        await trinkle(m, p, pshift, head - 1, false);
+
+        while (pshift !== 1 || p !== 1) {
+            if (pshift <= 1) {
+                const trail = trailingzeroes(p & ~1);
+                p >>>= trail;
+                pshift += trail;
+            } else {
+                p <<= 2;
+                p ^= 7;
+                pshift -= 2;
+                await trinkle(m, p >>> 1, pshift + 1, head - LP[pshift] - 1, true);
+                await trinkle(m, p, pshift, head - 1, true);
+            }
+            head--;
+        }
+        
+        for (let i = m.length - 2; i >= 0; i--) {
+            if (m[i] > m[i + 1]) {
+                [m[i], m[i + 1]] = [m[i + 1], m[i]];
+                await step();
+            }
+        }
+    };
+
+    await sort(data);
+};
+
+class CubeNode {
+    value:number;
+    children: CubeNode[];
+
+    constructor(v:number) {
+        this.value = v;
+        this.children = [];
+    }
+
+    insert(x:number) {
+        if (x <= this.value) {
+            if (!this.children[0]) this.children[0] = new CubeNode(x);
+            else this.children[0].insert(x);
+            return;
+        }
+
+        if (!this.children[1]) this.children[1] = new CubeNode(x);
+        else this.children[1].insert(x);
+    }
+
+    traverse():number[] {
+        let out:number[] = [];
+
+        if (this.children[0]) out.push(...this.children[0].traverse());
+        out.push(this.value);
+        if (this.children[1]) out.push(...this.children[1].traverse());
+
+        return out;
+    }
 }
 
 const cubesort = async () => {
-    
+    if (data.length < 2) return;
+
+    let root = new CubeNode(data[0]);
+    for (let i=1;i<data.length;i++) root.insert(data[i]);
+
+    let result = root.traverse();
+
+    for (let i=0;i<data.length;i++){
+        data[i] = result[i];
+        await step();
+    }
 }
 
 const crumsort = async () => {
-    
+    let runs = []
+    let current_run = [data[0]]
+
+    for (let i = 1; i < data.length; i++) {
+        if (data[i] >= current_run[current_run.length - 1]) {
+            current_run.push(data[i])
+        }
+        else {
+            runs.push(current_run)
+            current_run = [data[i]]
+        }
+    }
+    runs.push(current_run)
+
+    while (runs.length > 1) {
+        let new_runs = []
+        let i = 0
+        while (i < runs.length) {
+            if (i + 1 < runs.length) {
+                new_runs.push(await merge_lists(runs[i], runs[i+1]))
+                i += 2
+            }
+            else {
+                new_runs.push(runs[i])
+                i++
+            }
+        }
+        runs = new_runs
+    }
+
+    let final = runs[0]
+    for (let i = 0; i < data.length; i++) {
+        data[i] = final[i]
+        await step()
+    }
 }
 
 const fluxsort_sort = async () => {
@@ -729,9 +1075,53 @@ const insertion_sort_bucket = async (bucket: number[]) => {
     }
 };
 
-
 const introsort = async () => {
-    
+    let max_depth = 2 * Math.floor(Math.log2(data.length))
+    await introsort_sort(0, data.length - 1, max_depth)
+}
+
+const introsort_sort = async (low:number, high:number, depth:number) => {
+    if (high - low <= 16) {
+        await insertion_sort_range(low, high)
+    }
+    else if (depth === 0) {
+        await heap_sort_range(low, high)
+    }
+    else {
+        let pivot:number = await partition(low, high)
+        await introsort_sort(low, pivot-1, depth-1)
+        await introsort_sort(pivot+1, high, depth-1)
+    }
+}
+
+const heap_sort_range = async (low:number, high: number) => {
+    let n = high - low + 1
+    for (let i = Math.floor(n/2)-1; i >= 0; i--) {
+        await heapify_introsort(i, n, low)        
+    }
+
+    for (let i = n-1; i > 0; i--) {
+        swap(data, low, low+i)
+        await step()
+        await heapify_introsort(0, i, low)
+    }
+}
+
+const heapify_introsort = async (i: number, n: number, offset:number) => {
+    let largest = i;
+    let left = 2*i+1;
+    let right = 2*i+2;
+    if (left < n && data[offset+left] > data[offset+largest]) {
+        largest = left
+    }
+    if (right < n && data[offset+right] > data[offset+largest]) {
+        largest = right
+    }
+    if (largest !== i) {
+        swap(data, offset + i, offset + largest)
+        await step()
+        await heapify_introsort(largest, n, offset)
+    }   
 }
 
 const block_sort = async () => {
