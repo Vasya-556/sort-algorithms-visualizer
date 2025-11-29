@@ -9,7 +9,8 @@ const asc_dsc_label = document.getElementById("asc-dsc-label") as HTMLLabelEleme
 
 const sort_algorithm_select = document.getElementById("algorithm-select") as HTMLSelectElement;
 
-const result_label = document.getElementById("result-time") as HTMLLabelElement;
+const result_time_label = document.getElementById("result-time") as HTMLLabelElement;
+const result_step_label = document.getElementById("result-steps") as HTMLLabelElement;
 
 const start_button = document.getElementById("start-button") as HTMLButtonElement;
 const stop_button = document.getElementById("stop-button") as HTMLButtonElement;
@@ -25,6 +26,7 @@ let speed: number = Number(speed_input.value);
 let is_ascending:boolean = asc_dsc_input.checked;
 let sort_algorithm_name:string = "Block sort"
 let is_running: boolean = true;
+let count:number = 0;
 
 const algorithms: Record<string, () => Promise<void>> = {
     "Block sort": () => block_sort(),
@@ -77,10 +79,12 @@ sort_algorithm_select.addEventListener("change", () => {
 
 start_button.addEventListener("click", async () => {
     is_running = true;
+    count=0;
 
     const algorithm2 = algorithms[sort_algorithm_name] || bubble_sort;
     const sorted = await sort_result(algorithm2);
-    result_label.textContent = `${sorted} ms`
+    result_time_label.textContent = `${sorted} ms`
+    result_step_label.textContent = `${count} steps`
 });
 
 stop_button.addEventListener("click", () => {
@@ -195,6 +199,7 @@ const sort_result = async (fn: () => Promise<void>): Promise<number> => {
 };
 
 const step = async () => {
+    count++;
     await sleep(speed);
     display_data()
 }
