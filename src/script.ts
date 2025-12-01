@@ -24,7 +24,8 @@ import { block_sort,
     strand_sort,
     timsort,
     tournament_sort,
-    tree_sort } from "./sorts.js";
+    tree_sort 
+} from "./sorts.js";
 
 const size_input = document.getElementById("size-range") as HTMLInputElement;
 const size_label = document.getElementById("size-range-label") as HTMLLabelElement;
@@ -54,36 +55,37 @@ let speed: number = Number(speed_input.value);
 let is_ascending:boolean = asc_dsc_input.checked;
 let sort_algorithm_name:string = "Block sort"
 let is_running: boolean = true;
-let count:number = 0;
+// let count:number = 0;
+let state = { count: 0 };
 
 const algorithms: Record<string, () => Promise<void>> = {
-    "Block sort": () => block_sort(data, is_ascending, count, sleep, speed, display_data),
-    "Bogo sort": () => bogo_sort(data, is_ascending, count, sleep, speed, display_data, shuffle_data),
-    "Bubble sort": () => bubble_sort(data, is_ascending, count, sleep, speed, display_data),
-    "Cocktail shaker sort": () => cocktail_sort(data, is_ascending, count, sleep, speed, display_data),
-    "Comb sort": () => comb_sort(data, is_ascending, count, sleep, speed, display_data),
-    "Crumsort": () => crumsort(data, is_ascending, count, sleep, speed, display_data),
-    "Cubesort": () => cubesort(data, is_ascending, count, sleep, speed, display_data),
-    "Cycle sort": () => cycle_sort(data, is_ascending, count, sleep, speed, display_data),
-    "Exchange sort": () => exchange_sort(data, is_ascending, count, sleep, speed, display_data),
-    "Fluxsort": () => fluxsort_sort(data, is_ascending, count, sleep, speed, display_data),
-    "Gnome sort": () => gnome_sort(data, is_ascending, count, sleep, speed, display_data),
-    "Heap sort": () => heap_sort(data, is_ascending, count, sleep, speed, display_data),
-    "In-place merge sort": () => in_place_merge_sort(data, is_ascending, count, sleep, speed, display_data),
-    "Insertion sort": () => insertion_sort(data, is_ascending, count, sleep, speed, display_data),
-    "Introsort": () => introsort(data, is_ascending, count, sleep, speed, display_data),
-    "Library sort": () => library_sort(data, is_ascending, count, sleep, speed, display_data),
-    "Merge sort": () => merge_sort(data, is_ascending, count, sleep, speed, display_data),
-    "Odd–even sort": () => odd_even_sort(data, is_ascending, count, sleep, speed, display_data),
-    "Patience sort": () => patience_sort(data, is_ascending, count, sleep, speed, display_data),
-    "Quicksort": () => quicksort(data, is_ascending, count, sleep, speed, display_data),
-    "Selection sort": () => selection_sort(data, is_ascending, count, sleep, speed, display_data),
-    "Shellsort": () => shellsort(data, is_ascending, count, sleep, speed, display_data),
-    "Smoothsort": () => smoothsort(data, is_ascending, count, sleep, speed, display_data),
-    "Strand sort": () => strand_sort(data, is_ascending, count, sleep, speed, display_data),
-    "Timsort": () => timsort(data, is_ascending, count, sleep, speed, display_data),
-    "Tournament sort": () => tournament_sort(data, is_ascending, count, sleep, speed, display_data),
-    "Tree sort": () => tree_sort(data, is_ascending, count, sleep, speed, display_data),
+    "Block sort": () => block_sort(data, is_ascending, state, sleep, speed, display_data),
+    "Bogo sort": () => bogo_sort(data, is_ascending, state, sleep, speed, display_data, shuffle_data),
+    "Bubble sort": () => bubble_sort(data, is_ascending, state, sleep, speed, display_data),
+    "Cocktail shaker sort": () => cocktail_sort(data, is_ascending, state, sleep, speed, display_data),
+    "Comb sort": () => comb_sort(data, is_ascending, state, sleep, speed, display_data),
+    "Crumsort": () => crumsort(data, is_ascending, state, sleep, speed, display_data),
+    "Cubesort": () => cubesort(data, is_ascending, state, sleep, speed, display_data),
+    "Cycle sort": () => cycle_sort(data, is_ascending, state, sleep, speed, display_data),
+    "Exchange sort": () => exchange_sort(data, is_ascending, state, sleep, speed, display_data),
+    "Fluxsort": () => fluxsort_sort(data, is_ascending, state, sleep, speed, display_data),
+    "Gnome sort": () => gnome_sort(data, is_ascending, state, sleep, speed, display_data),
+    "Heap sort": () => heap_sort(data, is_ascending, state, sleep, speed, display_data),
+    "In-place merge sort": () => in_place_merge_sort(data, is_ascending, state, sleep, speed, display_data),
+    "Insertion sort": () => insertion_sort(data, is_ascending, state, sleep, speed, display_data),
+    "Introsort": () => introsort(data, is_ascending, state, sleep, speed, display_data),
+    "Library sort": () => library_sort(data, is_ascending, state, sleep, speed, display_data),
+    "Merge sort": () => merge_sort(data, is_ascending, state, sleep, speed, display_data),
+    "Odd–even sort": () => odd_even_sort(data, is_ascending, state, sleep, speed, display_data),
+    "Patience sort": () => patience_sort(data, is_ascending, state, sleep, speed, display_data),
+    "Quicksort": () => quicksort(data, is_ascending, state, sleep, speed, display_data),
+    "Selection sort": () => selection_sort(data, is_ascending, state, sleep, speed, display_data),
+    "Shellsort": () => shellsort(data, is_ascending, state, sleep, speed, display_data),
+    "Smoothsort": () => smoothsort(data, is_ascending, state, sleep, speed, display_data),
+    "Strand sort": () => strand_sort(data, is_ascending, state, sleep, speed, display_data),
+    "Timsort": () => timsort(data, is_ascending, state, sleep, speed, display_data),
+    "Tournament sort": () => tournament_sort(data, is_ascending, state, sleep, speed, display_data),
+    "Tree sort": () => tree_sort(data, is_ascending, state, sleep, speed, display_data),
 };
 
 size_input.addEventListener("input", () => {
@@ -107,12 +109,12 @@ sort_algorithm_select.addEventListener("change", () => {
 
 start_button.addEventListener("click", async () => {
     is_running = true;
-    count=0;
+    state.count=0;
 
     const algorithm2 = algorithms[sort_algorithm_name] || bubble_sort;
     const sorted = await sort_result(algorithm2);
     result_time_label.textContent = `${sorted} ms`
-    result_step_label.textContent = `${count} steps`
+    result_step_label.textContent = `${state.count} steps`
 });
 
 stop_button.addEventListener("click", () => {

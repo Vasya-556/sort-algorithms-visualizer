@@ -4,8 +4,8 @@ export const swap = (arr: number[], i: number, j: number) => {
     arr[j] = tmp;
 }
 
-export const step = async (count:number=0, sleep: Function, speed:number = 1, display_data: Function) => {
-    count++;
+export const step = async (state: { count: number}, sleep: Function, speed:number = 1, display_data: Function) => {
+    state.count++;
     await sleep(speed);
     display_data()
 }
@@ -73,22 +73,22 @@ export class TreeNode {
     }
 }
 
-export const partition = async (data:number[], is_ascending:boolean=true, count:number=0, sleep: Function, speed:number = 1, display_data: Function, low: number, high: number):Promise<number> => {
+export const partition = async (data:number[], is_ascending:boolean=true, state: { count: number}, sleep: Function, speed:number = 1, display_data: Function, low: number, high: number):Promise<number> => {
     let pivot: number = data[high]
     let i = low - 1;
     for (let j = low; j < high; j++) {
         if (data[j] <= pivot){
             i+=1
             swap(data, i, j);
-            await step(count, sleep, speed, display_data);
+            await step(state, sleep, speed, display_data);
         }
     }
     swap(data, i+1, high)
-    await step(count, sleep, speed, display_data);
+    await step(state, sleep, speed, display_data);
     return i+1
 }
 
-export const inplace_merge = async (data:number[], is_ascending:boolean=true, count:number=0, sleep: Function, speed:number = 1, display_data: Function, start: number, mid: number, end: number) => {
+export const inplace_merge = async (data:number[], is_ascending:boolean=true, state: { count: number}, sleep: Function, speed:number = 1, display_data: Function, start: number, mid: number, end: number) => {
     let i: number = start;
     let j: number = mid + 1;
     let value:number;
@@ -104,24 +104,24 @@ export const inplace_merge = async (data:number[], is_ascending:boolean=true, co
             while (index != i) {
                 data[index] = data[index -1]
                 index -= 1
-                await step(count, sleep, speed, display_data)
+                await step(state, sleep, speed, display_data)
             }
             data[i] = value
             i += 1
             mid += 1
             j += 1
-            await step(count, sleep, speed, display_data)
+            await step(state, sleep, speed, display_data)
         }
     }
 }
 
-export const build_max_heap = async (data:number[], is_ascending:boolean=true, count:number=0, sleep: Function, speed:number = 1, display_data: Function, n:number) => {
+export const build_max_heap = async (data:number[], is_ascending:boolean=true, state: { count: number}, sleep: Function, speed:number = 1, display_data: Function, n:number) => {
     for (let i = Math.floor(n/2)-1; i >= 0; i--) {
-        await heapify(data, is_ascending, count, sleep, speed, display_data, i, n);
+        await heapify(data, is_ascending, state, sleep, speed, display_data, i, n);
     }
 }
 
-export const heapify = async (data:number[], is_ascending:boolean=true, count:number=0, sleep: Function, speed:number = 1, display_data: Function, i: number, heapsize: number) => {
+export const heapify = async (data:number[], is_ascending:boolean=true, state: { count: number}, sleep: Function, speed:number = 1, display_data: Function, i: number, heapsize: number) => {
     let largest:number = i;
     let left: number = 2 * i + 1;
     let right: number = 2 * i + 2;
@@ -136,8 +136,8 @@ export const heapify = async (data:number[], is_ascending:boolean=true, count:nu
 
     if (largest != i){
         swap(data, i, largest);
-        await step(count, sleep, speed, display_data);
-        await heapify(data, is_ascending, count, sleep, speed, display_data, largest, heapsize)
+        await step(state, sleep, speed, display_data);
+        await heapify(data, is_ascending, state, sleep, speed, display_data, largest, heapsize)
     }
 }
 
@@ -169,21 +169,21 @@ export const replace_min_with_infinity = async (node: TreeNode): Promise<void> =
     node.set_value(Math.min(lv, rv))
 }
 
-export const insertion_sort_range = async (data:number[], is_ascending:boolean=true, count:number=0, sleep: Function, speed:number = 1, display_data: Function, start: number, end: number) => {
+export const insertion_sort_range = async (data:number[], is_ascending:boolean=true, state: { count: number}, sleep: Function, speed:number = 1, display_data: Function, start: number, end: number) => {
     for (let i = start + 1; i <= end; i++) {
         let key = data[i];
         let j = i - 1;
         while (j >= start && data[j] > key) {
             data[j + 1] = data[j];
             j--;
-            await step(count, sleep, speed, display_data);
+            await step(state, sleep, speed, display_data);
         }
         data[j + 1] = key;
-        await step(count, sleep, speed, display_data);
+        await step(state, sleep, speed, display_data);
     }
 }
 
-export const merge_range = async (data:number[], is_ascending:boolean=true, count:number=0, sleep: Function, speed:number = 1, display_data: Function, left: number, mid: number, right: number) => {
+export const merge_range = async (data:number[], is_ascending:boolean=true, state: { count: number}, sleep: Function, speed:number = 1, display_data: Function, left: number, mid: number, right: number) => {
     let L = data.slice(left, mid + 1);
     let R = data.slice(mid + 1, right + 1);
     let i = 0, j = 0, k = left;
@@ -195,17 +195,17 @@ export const merge_range = async (data:number[], is_ascending:boolean=true, coun
             data[k] = R[j++];
         }
         k++;
-        await step(count, sleep, speed, display_data);
+        await step(state, sleep, speed, display_data);
     }
 
     while (i < L.length) {
         data[k++] = L[i++];
-        await step(count, sleep, speed, display_data);
+        await step(state, sleep, speed, display_data);
     }
 
     while (j < R.length) {
         data[k++] = R[j++];
-        await step(count, sleep, speed, display_data);
+        await step(state, sleep, speed, display_data);
     }
 }
 
@@ -241,48 +241,48 @@ export class CubeNode {
     }
 }
 
-export const insertion_sort_bucket = async (data:number[], is_ascending:boolean=true, count:number=0, sleep: Function, speed:number = 1, display_data: Function, bucket: number[]) => {
+export const insertion_sort_bucket = async (data:number[], is_ascending:boolean=true, state: { count: number}, sleep: Function, speed:number = 1, display_data: Function, bucket: number[]) => {
     for (let i = 1; i < bucket.length; i++) {
         let key = bucket[i];
         let j = i - 1;
         while (j >= 0 && bucket[j] > key) {
             bucket[j + 1] = bucket[j];
             j--;
-            await step(count, sleep, speed, display_data);
+            await step(state, sleep, speed, display_data);
         }
         bucket[j + 1] = key;
-        await step(count, sleep, speed, display_data);
+        await step(state, sleep, speed, display_data);
     }
 };
 
-export const introsort_sort = async (data:number[], is_ascending:boolean=true, count:number=0, sleep: Function, speed:number = 1, display_data: Function, low:number, high:number, depth:number) => {
+export const introsort_sort = async (data:number[], is_ascending:boolean=true, state: { count: number}, sleep: Function, speed:number = 1, display_data: Function, low:number, high:number, depth:number) => {
     if (high - low <= 16) {
-        await insertion_sort_range(data, is_ascending, count, sleep, speed, display_data, low, high)
+        await insertion_sort_range(data, is_ascending, state, sleep, speed, display_data, low, high)
     }
     else if (depth === 0) {
-        await heap_sort_range(data, is_ascending, count, sleep, speed, display_data, low, high)
+        await heap_sort_range(data, is_ascending, state, sleep, speed, display_data, low, high)
     }
     else {
-        let pivot:number = await partition(data, is_ascending, count, sleep, speed, display_data, low, high)
-        await introsort_sort(data, is_ascending, count, sleep, speed, display_data, low, pivot-1, depth-1)
-        await introsort_sort(data, is_ascending, count, sleep, speed, display_data, pivot+1, high, depth-1)
+        let pivot:number = await partition(data, is_ascending, state, sleep, speed, display_data, low, high)
+        await introsort_sort(data, is_ascending, state, sleep, speed, display_data, low, pivot-1, depth-1)
+        await introsort_sort(data, is_ascending, state, sleep, speed, display_data, pivot+1, high, depth-1)
     }
 }
 
-export const heap_sort_range = async (data:number[], is_ascending:boolean=true, count:number=0, sleep: Function, speed:number = 1, display_data: Function, low:number, high: number) => {
+export const heap_sort_range = async (data:number[], is_ascending:boolean=true, state: { count: number}, sleep: Function, speed:number = 1, display_data: Function, low:number, high: number) => {
     let n = high - low + 1
     for (let i = Math.floor(n/2)-1; i >= 0; i--) {
-        await heapify_introsort(data, is_ascending, count, sleep, speed, display_data, i, n, low)        
+        await heapify_introsort(data, is_ascending, state, sleep, speed, display_data, i, n, low)        
     }
 
     for (let i = n-1; i > 0; i--) {
         swap(data, low, low+i)
-        await step(count, sleep, speed, display_data)
-        await heapify_introsort(data, is_ascending, count, sleep, speed, display_data, 0, i, low)
+        await step(state, sleep, speed, display_data)
+        await heapify_introsort(data, is_ascending, state, sleep, speed, display_data, 0, i, low)
     }
 }
 
-export const heapify_introsort = async (data:number[], is_ascending:boolean=true, count:number=0, sleep: Function, speed:number = 1, display_data: Function, i: number, n: number, offset:number) => {
+export const heapify_introsort = async (data:number[], is_ascending:boolean=true, state: { count: number}, sleep: Function, speed:number = 1, display_data: Function, i: number, n: number, offset:number) => {
     let largest = i;
     let left = 2*i+1;
     let right = 2*i+2;
@@ -294,12 +294,12 @@ export const heapify_introsort = async (data:number[], is_ascending:boolean=true
     }
     if (largest !== i) {
         swap(data, offset + i, offset + largest)
-        await step(count, sleep, speed, display_data)
-        await heapify_introsort(data, is_ascending, count, sleep, speed, display_data, largest, n, offset)
+        await step(state, sleep, speed, display_data)
+        await heapify_introsort(data, is_ascending, state, sleep, speed, display_data, largest, n, offset)
     }   
 }
 
-export const merge_lists = async (data:number[], is_ascending:boolean=true, count:number=0, sleep: Function, speed:number = 1, display_data: Function, L1: number[], L2: number[]): Promise<number[]> => {
+export const merge_lists = async (data:number[], is_ascending:boolean=true, state: { count: number}, sleep: Function, speed:number = 1, display_data: Function, L1: number[], L2: number[]): Promise<number[]> => {
     let merged: number[] = [];
     let i = 0;
     let j = 0;
@@ -307,17 +307,17 @@ export const merge_lists = async (data:number[], is_ascending:boolean=true, coun
     while (i < L1.length && j < L2.length) {
         if (L1[i] <= L2[j]) merged.push(L1[i++]);
         else merged.push(L2[j++]);
-        await step(count, sleep, speed, display_data);
+        await step(state, sleep, speed, display_data);
     }
 
     while (i < L1.length) {
         merged.push(L1[i++]);
-        await step(count, sleep, speed, display_data);
+        await step(state, sleep, speed, display_data);
     }
 
     while (j < L2.length) {
         merged.push(L2[j++]);
-        await step(count, sleep, speed, display_data);
+        await step(state, sleep, speed, display_data);
     }
 
     return merged;
