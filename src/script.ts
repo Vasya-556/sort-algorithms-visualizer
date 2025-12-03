@@ -1,4 +1,5 @@
-import { block_sort,
+import { 
+    block_sort,
     bogo_sort,
     bubble_sort,
     cocktail_sort,
@@ -55,7 +56,6 @@ let speed: number = Number(speed_input.value);
 let is_ascending:boolean = asc_dsc_input.checked;
 let sort_algorithm_name:string = "Block sort"
 let is_running: boolean = true;
-// let count:number = 0;
 let state = { count: 0 };
 
 const algorithms: Record<string, () => Promise<void>> = {

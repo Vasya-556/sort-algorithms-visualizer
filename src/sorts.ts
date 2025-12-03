@@ -1,4 +1,5 @@
 import { 
+    compare,
     swap, 
     step, 
     is_sorted, 
@@ -14,16 +15,15 @@ import {
     CubeNode, 
     insertion_sort_bucket, 
     introsort_sort, 
-    merge_lists 
+    merge_lists, 
+    insertion_sort_block, 
+    merge_blocks
 } from "./utils.js";
 
 export const bubble_sort = async (data:number[], is_ascending:boolean=true, state:{ count: number}, sleep: Function, speed:number = 1, display_data: Function) => {
     for (let i = 0; i < data.length - 1; i++) {
         for (let j = 0; j < data.length - 1 - i; j++) {
-            const condition = is_ascending
-            ? data[j] > data[j + 1]
-            : data[j] < data[j + 1];
-            if (condition){
+            if (compare(data[j], data[j+1], is_ascending)){
                 swap(data, j, j+1)
                 await step(state, sleep, speed, display_data)
             }
@@ -34,7 +34,7 @@ export const bubble_sort = async (data:number[], is_ascending:boolean=true, stat
 export const exchange_sort = async (data:number[], is_ascending:boolean=true, state:{ count: number}, sleep: Function, speed:number = 1, display_data: Function) => {
     for (let i = 0; i < data.length - 1; i++) {
         for (let j = i+1; j < data.length; j++) {
-            if (data[i] > data[j]){
+            if (compare(data[i], data[j], is_ascending)){
                 swap(data, i, j)
                 await step(state, sleep, speed, display_data);
             }
@@ -51,7 +51,7 @@ export const cycle_sort = async (data:number[], is_ascending:boolean=true, state
         let pos = cycleStart;
 
         for (let i = cycleStart + 1; i < n; i++) {
-            if (data[i] < item) pos++;
+            if (compare(item, data[i], is_ascending)) pos++;
         }
         if (pos === cycleStart) continue;
 
@@ -62,7 +62,7 @@ export const cycle_sort = async (data:number[], is_ascending:boolean=true, state
         while (pos !== cycleStart) {
             pos = cycleStart;
             for (let i = cycleStart + 1; i < n; i++) {
-                if (data[i] < item) pos++;
+                if (compare(item, data[i], is_ascending)) pos++;
             }
             while (item === data[pos]) pos++;
 
@@ -73,7 +73,7 @@ export const cycle_sort = async (data:number[], is_ascending:boolean=true, state
 }
 
 export const bogo_sort = async (data:number[], is_ascending:boolean=true, state:{ count: number}, sleep: Function, speed:number = 1, display_data: Function, shuffle_data: Function) => {
-    while (!is_sorted(data)) {
+    while (!is_sorted(data, is_ascending)) {
         shuffle_data()
         await step(state, sleep, speed, display_data);
     }
@@ -83,7 +83,7 @@ export const gnome_sort = async (data:number[], is_ascending:boolean=true, state
     let i: number = 0;
 
     while (i < (data.length)){
-        if (i === 0 || data[i] >= data[i-1]) {
+        if (i === 0 || !compare(data[i-1], data[i], is_ascending)) {
             i += 1
         }
         else {
@@ -100,7 +100,7 @@ export const selection_sort = async (data:number[], is_ascending:boolean=true, s
     for (let i = 0; i < data.length - 1; i++) {
         min_index = i;
         for (let j = i+1; j < data.length; j++) {
-            if (data[j] < data[min_index]){
+            if (compare(data[min_index], data[j], is_ascending)){
                 min_index = j
             }
         }
@@ -116,7 +116,7 @@ export const insertion_sort = async (data:number[], is_ascending:boolean=true, s
     for (let i = 1; i < data.length; i++) {
         key = data[i];
         j = i-1;
-        while (j >= 0 && data[j] > key) {
+        while (j >= 0 && compare(data[j], key, is_ascending)) {
             data[j+1] = data[j]
             j -= 1;
             await step(state, sleep, speed, display_data);
@@ -132,14 +132,14 @@ export const odd_even_sort = async (data:number[], is_ascending:boolean=true, st
     while (!sorted) {
         sorted = true;
         for (let i = 1; i < data.length -1; i+=1) {
-            if (data[i] > data[i+1]) {
+            if (compare(data[i], data[i+1], is_ascending)) {
                 swap(data, i, i+1)
                 sorted = false
                 await step(state, sleep, speed, display_data);
             }
         }
         for (let i = 0; i < data.length; i+=2) {
-            if (data[i] > data[i+1]) {
+            if (compare(data[i], data[i+1], is_ascending)) {
                 swap(data, i, i+1)
                 sorted = false
                 await step(state, sleep, speed, display_data);
@@ -156,7 +156,7 @@ export const cocktail_sort = async (data:number[], is_ascending:boolean=true, st
     while (swapped) {
         swapped = false;
         for (let i = start; i < end; i++) {
-            if (data[i] > data[i + 1]) {
+            if (compare(data[i], data[i+1], is_ascending)) {
                 swap(data, i, i + 1);
                 swapped = true;
                 await step(state, sleep, speed, display_data);
@@ -168,7 +168,7 @@ export const cocktail_sort = async (data:number[], is_ascending:boolean=true, st
         end--;
 
         for (let i = end; i > start; i--) {
-            if (data[i] < data[i - 1]) {
+            if (compare(data[i-1], data[i], is_ascending)) {
                 swap(data, i, i - 1);
                 swapped = true;
                 await step(state, sleep, speed, display_data);
@@ -192,7 +192,7 @@ export const comb_sort = async (data:number[], is_ascending:boolean=true, state:
         }
 
         for (let i = 0; i + gap < data.length; i++) {
-            if (data[i] > data[i + gap]) {
+            if (compare(data[i], data[i+gap], is_ascending)) {
                 swap(data, i, i + gap);
                 sorted = false;
                 await step(state, sleep, speed, display_data);
@@ -210,7 +210,7 @@ export const shellsort = async (data:number[], is_ascending:boolean=true, state:
         for (let i = gap; i < n; i++) {
             tmp = data[i]
             j = i;
-            while (j >= gap && data[j-gap] > tmp) {
+            while (j >= gap && compare(data[j-gap], tmp, is_ascending)) {
                 data[j] = data[j-gap]
                 j = j - gap;
                 await step(state, sleep, speed, display_data);
@@ -225,7 +225,7 @@ export const shellsort = async (data:number[], is_ascending:boolean=true, state:
 export const tree_sort = async (data:number[], is_ascending:boolean=true, state:{ count: number}, sleep: Function, speed:number = 1, display_data: Function) => {
     if (data.length === 0) return
     let root = new TreeNode(data[0])
-    for (let i = 1; i < data.length; i++) root.insert(data[i])
+    for (let i = 1; i < data.length; i++) root.insert(data[i], is_ascending)
 
     const sorted = root.in_order_traverse()
     for (let i = 0; i < sorted.length; i++) {
@@ -253,7 +253,7 @@ export const merge_sort = async (data:number[], is_ascending:boolean=true, state
     let i = start, j = mid + 1
 
     while (i <= mid && j <= end) {
-        if (is_ascending ? data[i] <= data[j] : data[i] >= data[j]) {
+        if (!compare(data[i], data[j], is_ascending)) {
             temp.push(data[i++])
         } else {
             temp.push(data[j++])
@@ -291,44 +291,48 @@ export const heap_sort = async (data:number[], is_ascending:boolean=true, state:
 }
 
 export const patience_sort = async (data:number[], is_ascending:boolean=true, state:{ count: number}, sleep: Function, speed:number = 1, display_data: Function) => {
-    let piles:Stack[]=[];
+    let piles: Stack[] = [];
 
-    for(let x of data){
-        let placed=false;
-        for(let pile of piles){
-            if(!pile.is_empty() && pile.top()>=x){
+    for (let x of data) {
+        let placed = false;
+        for (let pile of piles) {
+            if (!pile.is_empty() && !compare(x, pile.top(), is_ascending)) {
                 pile.push(x);
-                placed=true;
+                placed = true;
                 await step(state, sleep, speed, display_data);
                 break;
             }
         }
-        if(!placed){
-            let p=new Stack();
-            p.push(x);
-            piles.push(p);
+        if (!placed) {
+            let new_pile = new Stack();
+            new_pile.push(x);
+            piles.push(new_pile);
             await step(state, sleep, speed, display_data);
         }
     }
 
-    let result:number[]=[];
-    while(piles.length>0){
-        let min=Infinity,idx=0;
-        for(let i=0;i<piles.length;i++){
-            let t=piles[i].top();
-            if(t<min){min=t;idx=i;}
+    let result: number[] = [];
+    while (piles.length > 0) {
+        let selected_idx = 0;
+        let selected_val = piles[0].top();
+        for (let i = 0; i < piles.length; i++) {
+            let t = piles[i].top();
+            if (compare(selected_val, t, is_ascending)) {
+                selected_val = t;
+                selected_idx = i;
+            }
             await step(state, sleep, speed, display_data);
         }
-        result.push(piles[idx].pop()!);
+        result.push(piles[selected_idx].pop()!);
         await step(state, sleep, speed, display_data);
-        if(piles[idx].is_empty()){
-            piles.splice(idx,1);
+        if (piles[selected_idx].is_empty()) {
+            piles.splice(selected_idx, 1);
             await step(state, sleep, speed, display_data);
         }
     }
 
-    for(let i=0;i<result.length;i++){
-        data[i]=result[i];
+    for (let i = 0; i < result.length; i++) {
+        data[i] = result[i];
         await step(state, sleep, speed, display_data);
     }
 };
@@ -342,7 +346,7 @@ export const strand_sort = async (data:number[], is_ascending:boolean=true, stat
 
         let i = 0;
         while (i < data.length) {
-            if (data[i] > sublist[sublist.length-1]) {
+            if (compare(data[i], sublist[sublist.length-1], is_ascending)) {
                 sublist.push(data.splice(i,1)[0]);
                 await step(state, sleep, speed, display_data);
             } 
@@ -369,7 +373,7 @@ export const tournament_sort = async (data:number[], is_ascending:boolean=true, 
             if (i + 1 < nodes.length) {
                 let a = nodes[i]
                 let b = nodes[i + 1]
-                let p = new TreeNode(Math.min(a.get_value(), b.get_value()))
+                let p = new TreeNode(is_ascending ? Math.min(a.get_value(), b.get_value()) : Math.max(a.get_value(), b.get_value()))
                 p.set_left(a)
                 p.set_right(b)
                 new_nodes.push(p)
@@ -385,9 +389,9 @@ export const tournament_sort = async (data:number[], is_ascending:boolean=true, 
     let root = nodes[0]
     let result: number[] = []
 
-    while (root.get_value() !== Infinity) {
+    while (root.get_value() !== (is_ascending ? Infinity : -Infinity)) {
         result.push(root.get_value())
-        await replace_min_with_infinity(root)
+        await replace_min_with_infinity(root, is_ascending)
         await step(state, sleep, speed, display_data)
     }
 
@@ -405,13 +409,20 @@ export const library_sort = async (data:number[], is_ascending:boolean=true, sta
         let low=0, high=n-1;
         while(low<=high){
             let mid=(low+high)>>1;
-            if(B[mid]===null || B[mid]>x) high=mid-1;
-            else low=mid+1;
+            if(B[mid]===null || compare(B[mid], x, is_ascending)) {
+                high=mid-1;
+            }else {
+                low=mid+1;
+            }
         }
         let p=low;
-        while(p<n && B[p]!==null) p++;
+        while(p<n && B[p]!==null){
+            p++
+        };
         let i=p;
-        while(i>low){B[i]=B[i-1];i--;}
+        while(i>low){
+            B[i]=B[i-1];i--;
+        }
         B[low]=x;
         await step(state, sleep, speed, display_data);
     }
@@ -469,8 +480,10 @@ export const smoothsort = async (data:number[], is_ascending:boolean=true, state
         while (pshift > 1) {
             const rt = head - 1;
             const lf = head - 1 - LP[pshift - 2];
-            if (val >= m[lf] && val >= m[rt]) break;
-            if (m[lf] >= m[rt]) {
+            if (!compare(m[lf], val, is_ascending) && !compare(m[rt], val, is_ascending)) {
+                break;
+            }
+            if (compare(m[lf], m[rt], is_ascending)) {
                 m[head] = m[lf];
                 head = lf;
                 pshift--;
@@ -489,11 +502,15 @@ export const smoothsort = async (data:number[], is_ascending:boolean=true, state
         let val = m[head];
         while (p !== 1) {
             const stepson = head - LP[pshift];
-            if (m[stepson] <= val) break;
+            if (!compare(m[stepson], val, is_ascending)) {
+                break;
+            }
             if (!trusty && pshift > 1) {
                 const rt = head - 1;
                 const lf = head - 1 - LP[pshift - 2];
-                if (m[rt] >= m[stepson] || m[lf] >= m[stepson]) break;
+                if (compare(m[rt], m[stepson], is_ascending) || compare(m[lf], m[stepson], is_ascending)) {
+                    break;
+                }
             }
             m[head] = m[stepson];
             head = stepson;
@@ -521,8 +538,11 @@ export const smoothsort = async (data:number[], is_ascending:boolean=true, state
                 p >>>= 2;
                 pshift += 2;
             } else {
-                if (LP[pshift - 1] > m.length - head) await trinkle(m, p, pshift, head, false);
-                else await sift(m, pshift, head);
+                if (LP[pshift - 1] > m.length - head) {
+                    await trinkle(m, p, pshift, head, false);
+                } else {
+                    await sift(m, pshift, head);
+                }
 
                 if (pshift === 1) {
                     p <<= 1;
@@ -552,11 +572,18 @@ export const smoothsort = async (data:number[], is_ascending:boolean=true, state
             }
             head--;
         }
-        
-        for (let i = m.length - 2; i >= 0; i--) {
-            if (m[i] > m[i + 1]) {
-                [m[i], m[i + 1]] = [m[i + 1], m[i]];
-                await step(state, sleep, speed, display_data);
+
+        let sorted = false;
+        while (!sorted) {
+            sorted = true;
+            for (let i = 0; i < m.length - 1; i++) {
+                if (compare(m[i], m[i + 1], is_ascending)) {
+                    const t = m[i];
+                    m[i] = m[i + 1];
+                    m[i + 1] = t;
+                    sorted = false;
+                    await step(state, sleep, speed, display_data);
+                }
             }
         }
     };
@@ -567,7 +594,7 @@ export const smoothsort = async (data:number[], is_ascending:boolean=true, state
 export const cubesort = async (data:number[], is_ascending:boolean=true, state:{ count: number}, sleep: Function, speed:number = 1, display_data: Function) => {
     if (data.length < 2) return;
 
-    let root = new CubeNode(data[0]);
+    let root = new CubeNode(data[0], is_ascending);
     for (let i=1;i<data.length;i++) root.insert(data[i]);
 
     let result = root.traverse();
@@ -583,7 +610,7 @@ export const crumsort = async (data:number[], is_ascending:boolean=true, state:{
     let current_run = [data[0]]
 
     for (let i = 1; i < data.length; i++) {
-        if (data[i] >= current_run[current_run.length - 1]) {
+        if (compare(data[i], current_run[current_run.length - 1], is_ascending)) {
             current_run.push(data[i])
         }
         else {
@@ -618,14 +645,21 @@ export const crumsort = async (data:number[], is_ascending:boolean=true, state:{
 
 export const fluxsort_sort = async (data:number[], is_ascending:boolean=true, state:{ count: number}, sleep: Function, speed:number = 1, display_data: Function) => {
     let n = data.length;
-    if (n === 0) return;
+    if (n === 0) 
+        return;
     let min_val = Math.min(...data);
     let max_val = Math.max(...data);
     let buckets: number[][] = Array.from({ length: n }, () => []);
 
     for (let i = 0; i < n; i++) {
-        let index = Math.floor(((data[i] - min_val) / (max_val - min_val + 1)) * n);
-        if (index >= n) index = n - 1;
+        let ratio = (data[i] - min_val) / (max_val - min_val + 1);
+        let index = Math.floor(ratio * n);
+        if (index >= n){
+            index = n - 1;
+        }
+        if (index >= n) {
+            index = n - 1
+        };
         buckets[index].push(data[i]);
         await step(state, sleep, speed, display_data);
     }
@@ -635,7 +669,9 @@ export const fluxsort_sort = async (data:number[], is_ascending:boolean=true, st
     }
 
     let k = 0;
-    for (let bucket of buckets) {
+    let bucket_order = is_ascending ? buckets : [...buckets].reverse();
+
+    for (let bucket of bucket_order) {
         for (let x of bucket) {
             data[k++] = x;
             await step(state, sleep, speed, display_data);
@@ -648,35 +684,31 @@ export const introsort = async (data:number[], is_ascending:boolean=true, state:
     await introsort_sort(data, is_ascending, state, sleep, speed, display_data, 0, data.length - 1, max_depth)
 }
 
-export const block_sort = async (data:number[], is_ascending:boolean=true, state:{ count: number}, sleep: Function, speed:number = 1, display_data: Function) => {
+export const block_sort = async (data: number[], is_ascending: boolean = true, state: { count: number }, sleep: Function, speed: number = 1, display_data: Function) => {
     let n = data.length;
-    let block_size = Math.floor(Math.sqrt(n));
-    let blocks: number[][] = [];
-
-    for (let i = 0; i < n; i += block_size) {
-        let end = Math.min(i + block_size - 1, n - 1);
-        let block = data.slice(i, end + 1);
-        await insertion_sort_bucket(data, is_ascending, state, sleep, speed, display_data, block);
-        blocks.push(block);
+    if (n === 0) { 
+        return; 
     }
+    let block_size = Math.floor(Math.sqrt(n));
 
-    while (blocks.length > 1) {
-        let new_blocks: number[][] = [];
-        let i = 0;
-        while (i < blocks.length) {
-            if (i + 1 < blocks.length) {
-                new_blocks.push(await merge_lists(data, is_ascending, state, sleep, speed, display_data, blocks[i], blocks[i + 1]));
-                i += 2;
+    let starts: number[] = [];
+    for (let start = 0; start < n; start += block_size) {
+        let end = Math.min(start + block_size, n);
+        await insertion_sort_block(data, start, end, is_ascending, state, sleep, speed, display_data);
+        starts.push(start);
+    }
+    starts.push(n);
+
+    while (starts.length > 2) {
+        let new_starts: number[] = [starts[0]];
+        for (let i = 0; i < starts.length - 1; i += 2) {
+            if (i + 2 < starts.length) {
+                await merge_blocks(data, starts[i], starts[i + 1], starts[i + 2], is_ascending, state, sleep, speed, display_data);
+                new_starts.push(starts[i + 2]);
             } else {
-                new_blocks.push(blocks[i]);
-                i += 1;
+                new_starts.push(starts[i + 2] || starts[i + 1]);
             }
         }
-        blocks = new_blocks;
-    }
-
-    for (let i = 0; i < data.length; i++) {
-        data[i] = blocks[0][i];
-        await step(state, sleep, speed, display_data);
+        starts = new_starts;
     }
 };
