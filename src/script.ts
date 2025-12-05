@@ -90,8 +90,8 @@ start_button.addEventListener("click", async () => {
     is_running = true;
     state.count=0;
 
-    const algorithm2 = algorithms[sort_algorithm_name] || bubble_sort;
-    const sorted = await sort_result(algorithm2);
+    const algorithm = algorithms[sort_algorithm_name] || bubble_sort;
+    const sorted = await sort_result(algorithm);
     result_time_label.textContent = `${sorted} ms`
     result_step_label.textContent = `${state.count} steps`
 });
