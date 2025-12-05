@@ -1,23 +1,8 @@
 import { 
-    compare,
-    swap, 
-    step, 
-    is_sorted, 
-    TreeNode, 
-    partition, 
-    inplace_merge, 
-    build_max_heap, 
-    heapify, 
-    Stack, 
-    replace_min_with_infinity, 
-    insertion_sort_range, 
-    merge_range, 
-    CubeNode, 
-    insertion_sort_bucket, 
-    introsort_sort, 
-    merge_lists, 
-    insertion_sort_block, 
-    merge_blocks
+    compare, swap, step, is_sorted, TreeNode, partition, inplace_merge, 
+    build_max_heap, heapify, Stack, replace_min_with_infinity, 
+    insertion_sort_range, merge_range, CubeNode, insertion_sort_bucket, 
+    introsort_sort, merge_lists, insertion_sort_block, merge_blocks
 } from "./utils.js";
 
 export const bubble_sort = async (data:number[], is_ascending:boolean=true, state:{ count: number}, sleep: Function, speed:number = 1, display_data: Function) => {

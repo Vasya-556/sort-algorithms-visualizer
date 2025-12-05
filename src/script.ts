@@ -1,31 +1,10 @@
-import { 
-    block_sort,
-    bogo_sort,
-    bubble_sort,
-    cocktail_sort,
-    comb_sort,
-    crumsort,
-    cubesort,
-    cycle_sort,
-    exchange_sort,
-    fluxsort_sort,
-    gnome_sort,
-    heap_sort,
-    in_place_merge_sort,
-    insertion_sort,
-    introsort,
-    library_sort,
-    merge_sort,
-    odd_even_sort,
-    patience_sort,
-    quicksort,
-    selection_sort,
-    shellsort,
-    smoothsort,
-    strand_sort,
-    timsort,
-    tournament_sort,
-    tree_sort 
+import {
+    bubble_sort, block_sort, bogo_sort, cocktail_sort, comb_sort,
+    crumsort, cubesort, cycle_sort, exchange_sort, fluxsort_sort,
+    gnome_sort, heap_sort, in_place_merge_sort, insertion_sort,
+    introsort, library_sort, merge_sort, odd_even_sort, patience_sort,
+    quicksort, selection_sort, shellsort, smoothsort, strand_sort,
+    timsort, tournament_sort, tree_sort
 } from "./sorts.js";
 
 const size_input = document.getElementById("size-range") as HTMLInputElement;
@@ -186,7 +165,7 @@ const shuffle_data = () => {
     }
 }
 
-const display_data = () => {
+export const display_data = () => {
     clear_canvas()
     const inner_width = canvas.width * 0.8;
     const data_width = inner_width / size;
@@ -211,7 +190,7 @@ function resizeCanvas() {
 resizeCanvas();
 window.addEventListener("resize", resizeCanvas);
 
-const sleep = (ms: number) => new Promise<void>((resolve, reject) => {
+export const sleep = (ms: number) => new Promise<void>((resolve, reject) => {
     if (!is_running) return reject(new Error("stopped"));
 
     if (ms <= 0) {
