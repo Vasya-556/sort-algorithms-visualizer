@@ -222,8 +222,8 @@ export const tree_sort = async (data:number[], is_ascending:boolean=true, state:
 export const quicksort = async (data:number[], is_ascending:boolean=true, state:{ count: number}, sleep: Function, speed:number = 1, display_data: Function, low: number = 0, high: number = data.length - 1) => {
     if (low < high){
         let pi:number = await partition(data, is_ascending, state, sleep, speed, display_data, low, high)
-        quicksort(data, is_ascending, state, sleep, speed, display_data, low, pi-1)
-        quicksort(data, is_ascending, state, sleep, speed, display_data, pi+1, high)
+        await quicksort(data, is_ascending, state, sleep, speed, display_data, low, pi-1)
+        await quicksort(data, is_ascending, state, sleep, speed, display_data, pi+1, high)
     }
 }
 
@@ -637,7 +637,7 @@ export const fluxsort_sort = async (data:number[], is_ascending:boolean=true, st
     let buckets: number[][] = Array.from({ length: n }, () => []);
 
     for (let i = 0; i < n; i++) {
-        let ratio = (data[i] - min_val) / (max_val - min_val + 1);
+        let ratio = (data[i] - min_val) / (max_val - min_val);
         let index = Math.floor(ratio * n);
         if (index >= n){
             index = n - 1;
