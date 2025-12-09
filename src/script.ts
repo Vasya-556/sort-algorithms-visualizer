@@ -28,6 +28,11 @@ const shuffle_button = document.getElementById("shuffle-button") as HTMLButtonEl
 const generate_random_data_button = document.getElementById("generate-random-data-button") as HTMLButtonElement;
 const generate_pseudorandom_data_button = document.getElementById("generate-pseudorandom-data-button") as HTMLButtonElement;
 
+const root = getComputedStyle(document.documentElement);
+
+const color_primary = root.getPropertyValue("--primary").trim();
+const color_accent = root.getPropertyValue("--accent").trim();
+
 let size: number = Number(size_input.value); 
 let data: number[] = [];
 let data_copy: number[] = JSON.parse(JSON.stringify(data))
@@ -70,6 +75,8 @@ const algorithms: Record<string, () => Promise<void>> = {
 size_input.addEventListener("input", () => {
     size_label.textContent = `size: ${size_input.value} elements`;
     size = Number(size_input.value);
+    generate_random_data()
+    display_data()
 });
 
 speed_input.addEventListener("input", () => {
@@ -121,7 +128,7 @@ generate_pseudorandom_data_button.addEventListener("click", () => {
 });
 
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
-canvas.style.background = "#ff0000";
+canvas.style.background = color_accent;
 const header = document.getElementById("header")!;
 const header_height = header.offsetHeight;
 let window_height = window.innerHeight;
@@ -177,7 +184,7 @@ export const display_data = () => {
         ctx.beginPath();
         ctx.rect(canvas.width * 0.1 + i * data_width, canvas.height * 0.9 - data_height * data[i], data_width, data_height * data[i])
 
-        ctx.fillStyle = "green";
+        ctx.fillStyle = color_primary;
         ctx.fill()
     }
 }

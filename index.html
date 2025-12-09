@@ -3,33 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sort algortihm visualizer</title>
+    <title>Sort algorithm visualizer</title>
+    <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>      
-    <header id="header">
-        <div id="control-panel">
-            <div id="control-buttons">
-                <button id="start-button">Start</button>
-                <button id="stop-button">Stop</button>
-                <button id="reset-button">Reset</button>
-                <button id="shuffle-button">Shuffle</button>
-                <label for="asc-dsc-input" id="asc-dsc-label">Ascending</label>
-                <input id="asc-dsc-input" type="checkbox" autocomplete="off" class="hidden" checked>
+<body class="bg-[var(--background)] flex flex-col items-center p-4">
+    <header id="header" class="mb-4 flex flex-col items-center w-full max-w-6xl">
+        <div id="control-panel" class="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4 w-full justify-center">
+            <div id="control-buttons" class="rounded-xl bg-[var(--accent)] flex justify-center items-center gap-4 flex-col w-full md:w-auto p-2">
+                <button id="start-button" class="bg-[var(--primary)] hover:bg-[var(--secondary)] text-[var(--text)] font-bold py-2 px-4 rounded-full w-full md:w-auto">Start</button>
+                <button id="stop-button" class="bg-[var(--primary)] hover:bg-[var(--secondary)] text-[var(--text)] font-bold py-2 px-4 rounded-full w-full md:w-auto">Stop</button>
+                <button id="reset-button" class="bg-[var(--primary)] hover:bg-[var(--secondary)] text-[var(--text)] font-bold py-2 px-4 rounded-full w-full md:w-auto">Reset</button>
+                <button id="shuffle-button" class="bg-[var(--primary)] hover:bg-[var(--secondary)] text-[var(--text)] font-bold py-2 px-4 rounded-full w-full md:w-auto">Shuffle</button>
+                <input id="asc-dsc-input" type="checkbox" autocomplete="off" class="peer hidden" checked>
+                <label for="asc-dsc-input" id="asc-dsc-label" class="bg-[var(--secondary)] peer-checked:bg-[var(--primary)] peer-checked:hover:bg-[var(--secondary)] hover:bg-[var(--secondary)] text-[var(--text)] font-bold py-2 px-4 rounded-full cursor-pointer w-full md:w-auto text-center">Ascending</label>
             </div>
-            <div id="generate-data-buttons">
-                <button id="generate-random-data-button">Generate random data(with duplicates)</button>
-                <button id="generate-pseudorandom-data-button">Generate pseudorandom data(without duplicates)</button>
+            <div id="generate-data-buttons" class="rounded-xl bg-[var(--accent)] flex justify-center items-center gap-4 flex-col w-full md:w-auto p-2">
+                <button id="generate-random-data-button" class="bg-[var(--primary)] hover:bg-[var(--secondary)] text-[var(--text)] font-bold py-2 px-4 rounded-full w-full md:w-auto">Generate random data(with duplicates)</button>
+                <button id="generate-pseudorandom-data-button" class="bg-[var(--primary)] hover:bg-[var(--secondary)] text-[var(--text)] font-bold py-2 px-4 rounded-full w-full md:w-auto">Generate pseudorandom data(without duplicates)</button>
             </div>
-            <div id="control-sliders">
-                <label id="size-range-label" for="size-range">size: 10 elements</label><br>
-                <input id="size-range" value="10" type="range" min="10" max="500" autocomplete="off"><br>
-                <label id="speed-range-label" for="speed-range">speed: 1 ms</label><br>
-                <input id="speed-range" value="1" type="range" min="1" max="200" autocomplete="off">
+            <div id="control-sliders" class="rounded-xl bg-[var(--accent)] flex justify-center items-center gap-4 flex-col w-full md:w-auto p-2">
+                <label id="size-range-label" for="size-range" class="text-[var(--text)] font-semibold w-full text-center">size: 10 elements</label>
+                <input id="size-range" value="10" type="range" min="10" max="500" autocomplete="off" class="w-full h-3 bg-[var(--primary)] rounded-lg cursor-pointer accent-[var(--secondary)]">
+                <label id="speed-range-label" for="speed-range" class="text-[var(--text)] font-semibold w-full text-center">speed: 1 ms</label>
+                <input id="speed-range" value="1" type="range" min="1" max="200" autocomplete="off" class="h-3 w-full bg-[var(--primary)] rounded-lg cursor-pointer accent-[var(--secondary)]">
             </div>
-            <div id="control-select">
-                <label>Select algortihm:</label>
-                <select autocomplete="off" id="algorithm-select">
+            <div id="control-select" class="rounded-xl bg-[var(--accent)] flex justify-center items-center gap-4 flex-col w-full md:w-auto p-2">
+                <label class="text-[var(--text)] font-semibold w-full text-center">Select algorithm:</label>
+                <select autocomplete="off" id="algorithm-select" class="bg-[var(--primary)] rounded-md px-3 py-2 w-full md:w-48 cursor-pointer">
                     <option>Block sort</option>
                     <option>Bogo sort</option>
                     <option>Bubble sort</option>
@@ -60,19 +61,15 @@
                 </select>
             </div>
         </div>
-    
-        <div id="result-panel">
-            <h3>Result:</h3>
-            <label id="result-time">x ms</label><br>
-            <label id="result-steps">y steps</label><br>
+        <div id="result-panel" class="rounded-xl bg-[var(--accent)] flex justify-center gap-4 items-start w-full max-w-6xl p-2 flex-col">
+            <h3 class="text-2xl font-semibold text-[var(--text)] text-center">Result:</h3>
+            <label id="result-time" class="text-[var(--text)] font-semibold text-center">x ms</label>
+            <label id="result-steps" class="text-[var(--text)] font-semibold text-center">y steps</label>
         </div>
     </header>
-
-    <div id="canvas-contrainer">
-        <canvas id="canvas">
-        </canvas>
+    <div id="canvas-container" class="w-full max-w-6xl mx-auto">
+        <canvas id="canvas" class="w-full aspect-[4/2.5]"></canvas>
     </div>
-
     <script type="module" src="dist/script.js"></script>
 </body>
 </html>

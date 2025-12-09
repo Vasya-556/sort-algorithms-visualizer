@@ -1,0 +1,7 @@
+:root {
+    --text: oklch(13.04% 0.025 227.10);
+    --background: oklch(99.23% 0.004 236.49);
+    --primary: oklch(70.41% 0.159 241.89);
+    --secondary: oklch(66.17% 0.177 278.96);
+    --accent: oklch(53.12% 0.260 281.39);
+}
