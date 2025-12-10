@@ -30,8 +30,11 @@ const generate_pseudorandom_data_button = document.getElementById("generate-pseu
 
 const root = getComputedStyle(document.documentElement);
 
-const color_primary = root.getPropertyValue("--primary").trim();
-const color_accent = root.getPropertyValue("--accent").trim();
+let color_primary = root.getPropertyValue("--primary").trim();
+let color_accent = root.getPropertyValue("--accent").trim();
+
+const theme_toggle = document.getElementById("theme-toggle") as HTMLInputElement;
+const body = document.getElementById("body");
 
 let size: number = Number(size_input.value); 
 let data: number[] = [];
@@ -41,6 +44,7 @@ let is_ascending:boolean = asc_dsc_input.checked;
 let sort_algorithm_name:string = "Block sort"
 let is_running: boolean = true;
 let state = { count: 0 };
+let theme_light:boolean = theme_toggle.checked;
 
 const algorithms: Record<string, () => Promise<void>> = {
     "Block sort": () => block_sort(data, is_ascending, state, sleep, speed, display_data),
@@ -124,6 +128,18 @@ generate_random_data_button.addEventListener("click", () => {
 
 generate_pseudorandom_data_button.addEventListener("click", () => {
     generate_pseudorandom_data();
+    display_data()
+});
+
+theme_toggle.addEventListener("change", () => {
+    theme_light = theme_toggle.checked;
+    theme_light ? body?.setAttribute("data-theme", "dark") : body?.setAttribute("data-theme", "light")
+    
+    const computed = getComputedStyle(body!);
+    color_primary = computed.getPropertyValue("--primary").trim();
+    color_accent = computed.getPropertyValue("--accent").trim();
+    
+    canvas.style.background = color_accent;
     display_data()
 });
 
