@@ -1,6 +1,8 @@
 # Sort algorithms visualizer
 
 This is a visualizer for different sort algorithms. It uses canvas to display data, HTML for input data and Typescript for sorting data.
+![](image.png)
+[Demo](https://vasya-556.github.io/sort-algorithms-visualizer/)
 
 # Table of Contents
 
